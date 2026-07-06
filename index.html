@@ -138,11 +138,13 @@
 
   /* ---------- ABOUT ---------- */
   .about-grid{ display:grid; grid-template-columns:300px 1fr; gap:60px; align-items:start; }
+  .about-photo{ display:flex; flex-direction:column; align-items:center; gap:16px; }
   .headshot{ width:288px; height:288px; border-radius:50%; overflow:hidden; flex:none;
              background:linear-gradient(160deg,var(--primary),var(--navy)); position:relative;
              display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-lg); }
   .headshot .mono{ color:#fff; font-size:90px; font-weight:700; letter-spacing:.02em; opacity:.92; }
-  .headshot img{ width:100%; height:100%; object-fit:cover; }
+  /* scale a touch and nudge right so Peter sits centered in the circle */
+  .headshot img{ width:100%; height:100%; object-fit:cover; transform:scale(1.06) translateX(3%); }
   .about-body{ max-width:620px; }
   .about-body p{ font-size:17.5px; color:var(--navy); }
   .about-body p.lead{ font-size:22px; font-weight:600; color:var(--navy); }
@@ -158,6 +160,12 @@
   .bars .fill{ display:block; height:100%; width:0; background:linear-gradient(90deg,var(--primary),var(--primary-dark)); border-radius:999px;
                transition:width 1s cubic-bezier(.22,.61,.36,1); }
   .reveal.in .bars .fill, .bars.in .fill{ width:var(--w); }
+  /* highlighted top-two roles: orange + slightly larger */
+  .bars .row.hl{ margin-bottom:16px; }
+  .bars .row.hl .lbl{ font-size:16.5px; font-weight:600; }
+  .bars .row.hl .pct{ font-size:16.5px; color:var(--orange-dark); }
+  .bars .row.hl .track{ height:14px; }
+  .bars .row.hl .fill{ background:linear-gradient(90deg,var(--orange),var(--orange-dark)); }
   .donut-wrap{ display:flex; flex-direction:column; align-items:center; gap:16px; }
   .legend{ width:100%; display:flex; flex-direction:column; gap:8px; }
   .legend .li{ display:flex; align-items:center; gap:9px; font-size:14px; color:var(--navy); }
@@ -441,14 +449,16 @@
   <!-- ============================== ABOUT (§4.2) ============================== -->
   <section id="about" class="band" aria-labelledby="about-h">
     <div class="wrap">
-      <span class="kicker reveal">About Peter</span>
       <div class="about-grid mt-sm">
         <!-- SWAP: drop a file named "peter-headshot.jpg" into this project folder and it appears automatically.
              Until that file exists, the "PL" monogram shows as a fallback. Keep the circular crop. -->
-        <div class="headshot reveal" role="img" aria-label="Peter Lohmann">
-          <img id="peterPhoto" src="peter-headshot.jpg" alt="Peter Lohmann"
-               onerror="this.style.display='none';var m=document.getElementById('peterMono');if(m)m.style.display='flex';" />
-          <span id="peterMono" class="mono" aria-hidden="true" style="display:none;">PL</span>
+        <div class="about-photo reveal">
+          <span class="kicker">About Peter</span>
+          <div class="headshot" role="img" aria-label="Peter Lohmann">
+            <img id="peterPhoto" src="peter-headshot.jpg" alt="Peter Lohmann"
+                 onerror="this.style.display='none';var m=document.getElementById('peterMono');if(m)m.style.display='flex';" />
+            <span id="peterMono" class="mono" aria-hidden="true" style="display:none;">PL</span>
+          </div>
         </div>
         <div class="about-body reveal">
           <h2 id="about-h" class="sr-only" style="position:absolute;left:-9999px;">About Peter Lohmann</h2>
@@ -980,12 +990,16 @@ function el(html){ const t = document.createElement("template"); t.innerHTML = h
 // Build an SVG donut from [{label,pct,color}] using pathLength=100 so pct maps directly.
 function donutSVG(data, ariaLabel){
   const size=176, sw=30, r=(size-sw)/2, c=size/2;
+  // Normalize to the data's own total so the ring is always 100% filled (no white sliver
+  // when the source percentages sum to 99). Legend still shows the original percentages.
+  const total = data.reduce(function(s,d){ return s + d.pct; }, 0) || 100;
   let off=0, segs="";
   data.forEach(function(d){
+    const len = d.pct / total * 100;
     segs += '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="none" stroke="'+d.color+'" stroke-width="'+sw+'"'
-          + ' pathLength="100" stroke-dasharray="'+d.pct+' '+(100-d.pct)+'" stroke-dashoffset="'+(-off)+'"'
+          + ' pathLength="100" stroke-dasharray="'+len+' '+(100-len)+'" stroke-dashoffset="'+(-off)+'"'
           + ' transform="rotate(-90 '+c+' '+c+')"></circle>';
-    off += d.pct;
+    off += len;
   });
   return '<svg viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" role="img" aria-label="'+ariaLabel+'">'+segs+'</svg>';
 }
@@ -996,11 +1010,13 @@ function legend(data){
 }
 
 function renderCharts(){
-  // Role bars
-  document.getElementById("roleBars").innerHTML = ROLE_DATA.map(function(d){
-    return '<div class="row"><span class="lbl">'+d.label+'</span><span class="pct">'+d.pct+'%</span>'
+  // Role bars — first two rows (the PM decision makers) are highlighted in orange and slightly larger.
+  document.getElementById("roleBars").innerHTML = ROLE_DATA.map(function(d, i){
+    const hl = i < 2 ? " hl" : "";
+    return '<div class="row'+hl+'"><span class="lbl">'+d.label+'</span><span class="pct">'+d.pct+'%</span>'
          + '<span class="track"><span class="fill" style="--w:'+d.pct+'%"></span></span></div>';
-  }).join("");
+  }).join("")
+    + '<p class="chart-note">The majority of Peter\'s audience is a property management company decision maker.</p>';
   // Unit donut
   const uAria = "Portfolio size distribution: " + UNIT_DATA.map(function(d){return d.label+" "+d.pct+"%";}).join(", ");
   document.getElementById("unitDonut").innerHTML = donutSVG(UNIT_DATA, uAria) + legend(UNIT_DATA);
