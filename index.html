@@ -1,52 +1,641 @@
 <!--
   ============================================================================
-  PETER LOHMANN — SPONSORSHIP & MEDIA KIT  (single-file interactive page)
+  PETER LOHMANN — SPONSORSHIP & MEDIA KIT  (single self-contained page)
   ============================================================================
-  HOW TO UPDATE THIS PAGE (no coding needed — only edit the CONFIG block below):
+  HOW TO UPDATE THIS PAGE (no coding needed — only touch the CONFIG block in the <script>):
    1. CHANGE A PRICE ....... find it in CONFIG.products / seasonPrograms / consulting, edit the number.
-   2. PODCAST IS BACK ...... set CONFIG.podcast.available = true (flip false→true). Everything un-grays
-                             and podcast slots rejoin the bundle math automatically.
+   2. PODCAST IS BACK ...... set CONFIG.podcast.available = true (flip false to true). Everything
+                             un-grays and podcast slots rejoin the bundle math automatically.
    3. CHANGE RETURN DATE ... edit CONFIG.podcast.returnDate ("YYYY-MM-DD").
    4. ADD / REMOVE A DEAL .. edit the CONFIG.urgentDeals array (copy the sample line, fill it in).
-   5. SWAP A LOGO ......... find the partner in the logo grid markup, set its <img src> (search "SWAP:").
-   6. SWAP THE HEADSHOT .... search "SWAP:" near About Peter, set the <img src>.
-  Bundle prices & savings badges are COMPUTED from line items — never typed in by hand, so they can't drift.
+   5. SWAP A LOGO ......... search this file for "SWAP:" in the Partners grid, set that <img src>.
+   6. SWAP THE HEADSHOT .... search this file for "SWAP:" near About Peter, set that <img src>.
+  Bundle prices & savings badges are COMPUTED from line items, never typed by hand, so they can't drift.
   ============================================================================
 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Peter Lohmann — Sponsorship &amp; Media Kit 2026</title>
+<meta name="description" content="Sponsorship and media opportunities with Peter Lohmann: targeted exposure to over 20,000 property management professionals." />
+<title>Peter Lohmann · Sponsorship &amp; Media Kit 2026</title>
 
-<!-- SCAFFOLD PREVIEW STYLES (temporary — will be replaced by the full design) -->
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-         color: #1F3A4D; max-width: 720px; margin: 40px auto; padding: 0 20px; line-height: 1.5; }
-  h1 { color: #2C7CB0; }
-  .card { border: 1px solid #DCE7EF; border-radius: 12px; padding: 20px; margin: 16px 0; }
-  .price { font-size: 32px; font-weight: 700; color: #1F3A4D; }
-  .badge { display: inline-block; background: #DCE7EF; color: #1F3A4D; border-radius: 999px;
-           padding: 4px 12px; font-size: 14px; font-weight: 600; }
-  .badge.orange { background: #E0703C; color: #fff; }
-  .li { padding: 2px 0; }
-  .li.dropped { color: #9aa7b0; text-decoration: line-through; }
-  .note { color: #6b7a86; font-size: 14px; }
-  .checkline { font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
-  .ok { color: #2e7d32; } .fail { color: #c62828; font-weight: 700; }
+  /* ---------- DESIGN TOKENS ---------- */
+  :root{
+    --primary:#2C7CB0;      /* steel blue  */
+    --primary-dark:#256a98;
+    --navy:#1F3A4D;         /* text / headers */
+    --wash:#DCE7EF;         /* light blue-gray section wash */
+    --wash-soft:#eef4f9;
+    --orange:#E0703C;       /* single accent, used sparingly */
+    --orange-dark:#c95e2d;
+    --ink:#1F3A4D;
+    --muted:#5f7280;
+    --muted-2:#8496a2;
+    --line:#dce4ec;
+    --card:#ffffff;
+    --radius:18px;
+    --radius-sm:12px;
+    --shadow:0 1px 2px rgba(31,58,77,.05), 0 8px 24px rgba(31,58,77,.06);
+    --shadow-lg:0 2px 4px rgba(31,58,77,.06), 0 18px 48px rgba(31,58,77,.12);
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji",sans-serif;
+    --maxw:1120px;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; background:#fff; color:var(--ink);
+    font-family:var(--sans); line-height:1.55; font-size:17px;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  a{ color:var(--primary); text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+  img{ max-width:100%; display:block; }
+  h1,h2,h3,h4{ line-height:1.12; letter-spacing:-.02em; color:var(--navy); margin:0; font-weight:700; }
+  p{ margin:0 0 1em; }
+  ::selection{ background:var(--wash); }
+
+  /* focus visibility for keyboard users */
+  a:focus-visible,button:focus-visible,.chip-link:focus-visible{
+    outline:3px solid var(--primary); outline-offset:3px; border-radius:6px;
+  }
+
+  /* skip link */
+  .skip{ position:absolute; left:-999px; top:8px; background:var(--navy); color:#fff;
+         padding:10px 16px; border-radius:8px; z-index:200; }
+  .skip:focus{ left:12px; }
+
+  /* ---------- LAYOUT ---------- */
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 24px; }
+  section{ scroll-margin-top:72px; }
+  .band{ padding:88px 0; }
+  .band.tight{ padding:64px 0; }
+  .band.wash{ background:var(--wash-soft); }
+
+  .kicker{
+    display:inline-block; background:var(--wash); color:var(--primary-dark);
+    font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    padding:6px 14px; border-radius:999px; margin-bottom:18px;
+  }
+  .h-lead{ font-size:clamp(30px,4.4vw,46px); margin-bottom:10px; }
+  .sub{ color:var(--muted); font-size:clamp(17px,2vw,20px); max-width:60ch; margin:0 0 8px; }
+
+  /* ---------- NAV ---------- */
+  nav.top{
+    position:sticky; top:0; z-index:100;
+    background:rgba(255,255,255,.82); backdrop-filter:saturate(180%) blur(14px);
+    -webkit-backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.top .bar{ display:flex; align-items:center; gap:20px; height:58px; max-width:var(--maxw); margin:0 auto; padding:0 24px; }
+  nav.top .brand{ font-weight:700; color:var(--navy); letter-spacing:-.01em; font-size:17px; white-space:nowrap; }
+  nav.top .brand span{ color:var(--primary); }
+  nav.top .links{ display:flex; gap:22px; margin-left:8px; flex:1; }
+  nav.top .links a{ color:var(--navy); font-size:15px; font-weight:500; }
+  nav.top .links a:hover{ color:var(--primary); text-decoration:none; }
+  nav.top .book{ margin-left:auto; }
+
+  /* ---------- BUTTONS ---------- */
+  .btn{ display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:16px;
+        border-radius:999px; padding:12px 24px; border:1px solid transparent; cursor:pointer;
+        transition:transform .15s ease, box-shadow .15s ease, background .15s ease; white-space:nowrap; }
+  .btn:hover{ text-decoration:none; transform:translateY(-1px); }
+  .btn-primary{ background:var(--orange); color:#fff; box-shadow:0 6px 18px rgba(224,112,60,.28); }
+  .btn-primary:hover{ background:var(--orange-dark); }
+  .btn-navy{ background:var(--navy); color:#fff; }
+  .btn-navy:hover{ background:#16303f; }
+  .btn-ghost{ background:#fff; color:var(--navy); border-color:var(--line); }
+  .btn-sm{ padding:9px 18px; font-size:14px; }
+
+  /* ---------- CARDS ---------- */
+  .grid{ display:grid; gap:22px; }
+  .g2{ grid-template-columns:repeat(2,1fr); }
+  .g3{ grid-template-columns:repeat(3,1fr); }
+  .g4{ grid-template-columns:repeat(4,1fr); }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+         padding:26px; box-shadow:var(--shadow); }
+  .card h3{ font-size:20px; margin-bottom:8px; }
+  .card p{ color:var(--muted); font-size:15.5px; margin:0; }
+
+  .num-badge{ width:38px; height:38px; border-radius:10px; background:var(--wash); color:var(--primary-dark);
+              display:flex; align-items:center; justify-content:center; font-weight:700; margin-bottom:14px; }
+
+  /* ---------- HERO ---------- */
+  .hero{ position:relative; overflow:hidden;
+         background:
+           radial-gradient(1200px 480px at 78% -8%, rgba(44,124,176,.14), transparent 60%),
+           radial-gradient(900px 420px at 0% 105%, rgba(220,231,239,.7), transparent 55%),
+           linear-gradient(180deg,#fff 0%, #f7fafc 100%);
+       }
+  .hero .wrap{ padding-top:96px; padding-bottom:104px; }
+  .hero .eyebrow{ color:var(--primary); font-weight:700; letter-spacing:.14em; text-transform:uppercase; font-size:14px; margin-bottom:14px; }
+  .hero h1{ font-size:clamp(48px,9vw,104px); line-height:.98; margin-bottom:20px; }
+  .hero .subtitle{ font-size:clamp(19px,2.4vw,24px); color:var(--navy); font-weight:600; margin-bottom:14px; }
+  .hero .tagline{ font-size:clamp(17px,2vw,20px); color:var(--muted); max-width:40ch; margin-bottom:34px; }
+  .hero .cta-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:34px; }
+  .hero .foot{ color:var(--muted-2); font-size:15px; }
+  .hero .foot a{ color:var(--primary); }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{ display:grid; grid-template-columns:220px 1fr; gap:44px; align-items:start; }
+  .headshot{ width:200px; height:200px; border-radius:50%; overflow:hidden; flex:none;
+             background:linear-gradient(160deg,var(--primary),var(--navy)); position:relative;
+             display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-lg); }
+  .headshot .mono{ color:#fff; font-size:62px; font-weight:700; letter-spacing:.02em; opacity:.92; }
+  .headshot img{ width:100%; height:100%; object-fit:cover; }
+  .about-body p{ font-size:17.5px; color:var(--navy); }
+  .about-body p.lead{ font-size:22px; font-weight:600; color:var(--navy); }
+
+  /* ---------- AUDIENCE / CHARTS ---------- */
+  .charts{ display:grid; grid-template-columns:1.15fr .9fr .9fr; gap:26px; align-items:stretch; }
+  .chart-card h3{ font-size:18px; margin-bottom:4px; }
+  .chart-card .cap{ color:var(--muted); font-size:14px; margin-bottom:18px; }
+  .bars .row{ display:grid; grid-template-columns:1fr auto; gap:8px 12px; margin-bottom:14px; align-items:center; }
+  .bars .lbl{ font-size:14.5px; color:var(--navy); font-weight:500; }
+  .bars .pct{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--primary-dark); font-size:14.5px; }
+  .bars .track{ grid-column:1 / -1; height:10px; background:var(--wash); border-radius:999px; overflow:hidden; }
+  .bars .fill{ display:block; height:100%; width:0; background:linear-gradient(90deg,var(--primary),var(--primary-dark)); border-radius:999px;
+               transition:width 1s cubic-bezier(.22,.61,.36,1); }
+  .reveal.in .bars .fill, .bars.in .fill{ width:var(--w); }
+  .donut-wrap{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .legend{ width:100%; display:flex; flex-direction:column; gap:8px; }
+  .legend .li{ display:flex; align-items:center; gap:9px; font-size:14px; color:var(--navy); }
+  .legend .dot{ width:12px; height:12px; border-radius:3px; flex:none; }
+  .legend .lp{ margin-left:auto; font-weight:700; font-variant-numeric:tabular-nums; color:var(--muted); }
+  .chart-note{ margin-top:14px; font-size:13.5px; color:var(--muted); line-height:1.5; }
+
+  /* ---------- ENGAGEMENT STATS ---------- */
+  .stat-hero{ text-align:center; margin-bottom:34px; }
+  .stat-hero .big{ font-size:clamp(46px,9vw,92px); font-weight:700; color:var(--navy); letter-spacing:-.03em; line-height:1;
+                   background:linear-gradient(90deg,var(--primary),var(--navy)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .stat-hero .lbl{ color:var(--muted); font-size:18px; margin-top:8px; }
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .stat{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:24px; text-align:center; box-shadow:var(--shadow); }
+  .stat .v{ font-size:34px; font-weight:700; color:var(--primary-dark); font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  .stat .k{ color:var(--muted); font-size:14.5px; margin-top:4px; }
+
+  /* ---------- PARTNERS ---------- */
+  .logos{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .logo-slot{ height:76px; border:1px solid var(--line); border-radius:var(--radius-sm); background:#fff;
+              display:flex; align-items:center; justify-content:center; padding:12px; text-align:center;
+              color:var(--navy); font-weight:600; font-size:15px; box-shadow:var(--shadow); }
+  .logo-slot img{ max-height:42px; width:auto; object-fit:contain; }
+
+  /* ---------- WHAT YOU CAN BOOK ---------- */
+  .book-col{ position:relative; }
+  .book-col ul{ margin:12px 0 0; padding-left:18px; color:var(--muted); font-size:15px; }
+  .book-col li{ margin-bottom:7px; }
+  .tag{ display:inline-block; font-size:12.5px; font-weight:600; padding:4px 11px; border-radius:999px; margin-top:12px; }
+  .tag-warn{ background:#fff3ec; color:var(--orange-dark); border:1px solid #f6d3c1; }
+
+  /* ---------- AD FORMAT MOCKS ---------- */
+  .mock{ border:1px dashed #c3d2de; border-radius:var(--radius-sm); background:#fbfdff; padding:18px; }
+  .mock .tagline-mini{ font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted-2); margin-bottom:10px; }
+  .mock .mock-logo{ display:inline-block; background:var(--wash); color:var(--primary-dark); font-weight:700;
+                    padding:6px 12px; border-radius:8px; font-size:13px; margin-bottom:12px; }
+  .mock h4{ font-size:19px; margin-bottom:8px; color:var(--navy); }
+  .mock p{ color:var(--muted); font-size:14.5px; margin:0 0 12px; }
+  .mock .mock-cta{ display:inline-block; background:var(--primary); color:#fff; font-weight:600; font-size:14px; padding:9px 18px; border-radius:8px; }
+  .mock.secondary{ background:#fff; }
+  .mock.secondary p{ color:var(--navy); font-size:15px; }
+  .mock .fake-link{ color:var(--primary); text-decoration:underline; }
+  .fmt-meta{ font-size:13.5px; color:var(--muted); margin-top:10px; }
+
+  /* ---------- PRICING CARDS ---------- */
+  .price-card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow); position:relative; }
+  .price-card h3{ font-size:19px; margin-bottom:2px; }
+  .price-card .desc{ color:var(--muted); font-size:14.5px; margin-bottom:16px; }
+  .price-card .amt{ font-size:38px; font-weight:700; color:var(--navy); letter-spacing:-.02em; }
+  .price-card .amt small{ font-size:15px; font-weight:600; color:var(--muted); letter-spacing:0; }
+  .chip{ display:inline-block; font-size:12.5px; font-weight:600; padding:4px 11px; border-radius:999px; }
+  .chip-soldout{ background:#f0f3f6; color:#8496a2; border:1px solid #e2e8ee; }
+  .muted-note{ text-align:center; color:var(--muted); font-size:15px; margin-top:24px; }
+  .muted-note b{ color:var(--navy); }
+
+  /* sold-out visual treatment (driven by CONFIG.podcast.available) */
+  .is-soldout{ opacity:.62; filter:grayscale(.55); }
+  .is-soldout .amt{ color:var(--muted); }
+
+  /* ---------- SEASON PROGRAMS ---------- */
+  .season-card{ position:relative; overflow:hidden; }
+  .value-note{ color:var(--primary-dark); font-weight:600; font-size:14px; }
+  .ribbon{ position:absolute; top:16px; right:-42px; transform:rotate(45deg);
+           background:var(--navy); color:#fff; font-weight:700; font-size:12.5px; letter-spacing:.12em;
+           padding:6px 52px; box-shadow:var(--shadow); }
+  ul.feat{ list-style:none; margin:16px 0 0; padding:0; }
+  ul.feat li{ position:relative; padding-left:26px; margin-bottom:9px; color:var(--navy); font-size:15px; }
+  ul.feat li::before{ content:"✓"; position:absolute; left:0; top:0; color:var(--primary); font-weight:700; }
+
+  /* ---------- BUNDLES ---------- */
+  .bundle{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:30px; box-shadow:var(--shadow-lg); position:relative; }
+  .bundle.orange{ border-color:#f2c9b5; box-shadow:0 2px 4px rgba(224,112,60,.08), 0 20px 50px rgba(224,112,60,.14); }
+  .bundle .b-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+  .bundle h3{ font-size:24px; }
+  .bundle .save{ background:var(--wash); color:var(--primary-dark); font-weight:700; font-size:14px; padding:6px 14px; border-radius:999px; white-space:nowrap; }
+  .bundle.orange .save{ background:var(--orange); color:#fff; }
+  .bundle .price{ font-size:46px; font-weight:700; color:var(--navy); letter-spacing:-.03em; margin:14px 0 2px; }
+  .bundle .price small{ font-size:16px; color:var(--muted); font-weight:600; letter-spacing:0; }
+  .bundle .term{ color:var(--muted); font-size:14px; margin-bottom:6px; }
+  .bundle ul.lines{ list-style:none; margin:18px 0 0; padding:18px 0 0; border-top:1px solid var(--line); }
+  .bundle ul.lines li{ display:flex; gap:10px; align-items:baseline; margin-bottom:10px; font-size:15.5px; color:var(--navy); }
+  .bundle ul.lines li .q{ color:var(--primary-dark); font-weight:700; font-variant-numeric:tabular-nums; min-width:26px; }
+  .bundle ul.lines li.dropped{ color:var(--muted-2); }
+  .bundle ul.lines li.dropped .name{ text-decoration:line-through; }
+  .bundle ul.lines li .ret{ color:var(--orange-dark); font-size:12.5px; font-weight:600; }
+  .bundle .rejoin{ margin-top:14px; font-size:13.5px; color:var(--orange-dark); background:#fff3ec; border:1px solid #f6d3c1; padding:9px 12px; border-radius:10px; }
+  .extras-card ul{ list-style:none; margin:0; padding:0; }
+  .extras-card li{ display:flex; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px solid var(--line); font-size:15.5px; }
+  .extras-card li:last-child{ border-bottom:0; }
+  .extras-card .ev{ font-weight:700; color:var(--navy); white-space:nowrap; }
+
+  /* ---------- URGENT DEALS ---------- */
+  .deals-band{ background:linear-gradient(180deg,#fff7f2,#fff); }
+  .deal-card{ background:#fff; border:1px solid #f3d6c6; border-left:5px solid var(--orange); border-radius:var(--radius); padding:22px; box-shadow:var(--shadow); }
+  .deal-card .slot{ font-weight:700; color:var(--navy); font-size:18px; }
+  .deal-card .when{ color:var(--muted); font-size:14px; margin-top:2px; }
+  .deal-card .prices{ display:flex; align-items:baseline; gap:12px; margin:14px 0 6px; }
+  .deal-card .was{ color:var(--muted-2); text-decoration:line-through; font-size:17px; }
+  .deal-card .now{ color:var(--orange-dark); font-weight:700; font-size:32px; letter-spacing:-.02em; }
+  .deal-card .off{ background:var(--orange); color:#fff; font-weight:700; font-size:13px; padding:3px 10px; border-radius:999px; }
+  .deal-card .exp{ display:inline-block; margin-top:8px; font-size:12.5px; color:var(--orange-dark); font-weight:600; }
+  .deal-empty{ text-align:center; color:var(--muted); background:#fff; border:1px dashed #e2c4b3; border-radius:var(--radius); padding:34px; }
+
+  /* ---------- CONSULTING ---------- */
+  .consult-lead{ font-size:20px; color:var(--navy); max-width:70ch; }
+
+  /* ---------- FINAL CTA ---------- */
+  .cta-final{ background:linear-gradient(150deg,var(--navy),#16303f); color:#fff; border-radius:26px; padding:56px 44px; text-align:center; }
+  .cta-final h2{ color:#fff; font-size:clamp(28px,4vw,42px); margin-bottom:14px; }
+  .cta-final p{ color:#cdd9e2; max-width:60ch; margin:0 auto 12px; font-size:17px; }
+  .cta-final .btn{ margin-top:18px; }
+  .cta-final a.mail{ color:#8fc4e6; font-weight:600; }
+
+  footer.site{ padding:34px 0; text-align:center; color:var(--muted-2); font-size:14px; }
+  footer.site a{ color:var(--muted); }
+
+  .center{ text-align:center; }
+  .mt-sm{ margin-top:10px; } .mt-md{ margin-top:24px; } .mt-lg{ margin-top:40px; }
+
+  /* ---------- REVEAL ANIMATION ---------- */
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+  .stagger > *{ opacity:0; transform:translateY(22px); transition:opacity .55s ease, transform .55s ease; }
+  .stagger.in > *{ opacity:1; transform:none; }
+  .stagger.in > *:nth-child(2){ transition-delay:.07s; }
+  .stagger.in > *:nth-child(3){ transition-delay:.14s; }
+  .stagger.in > *:nth-child(4){ transition-delay:.21s; }
+  .stagger.in > *:nth-child(5){ transition-delay:.28s; }
+  .stagger.in > *:nth-child(6){ transition-delay:.35s; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:960px){
+    .charts{ grid-template-columns:1fr; }
+    .about-grid{ grid-template-columns:1fr; gap:26px; justify-items:center; text-align:center; }
+    .about-body{ text-align:left; }
+    .g4{ grid-template-columns:repeat(2,1fr); }
+    .logos{ grid-template-columns:repeat(3,1fr); }
+  }
+  @media (max-width:720px){
+    body{ font-size:16px; }
+    nav.top .links{ display:none; }
+    .band{ padding:60px 0; }
+    .g2,.g3,.g4{ grid-template-columns:1fr; }
+    .stats{ grid-template-columns:1fr 1fr; }
+    .logos{ grid-template-columns:repeat(2,1fr); }
+    .cta-final{ padding:40px 22px; }
+    .hero .wrap{ padding-top:64px; padding-bottom:72px; }
+  }
+  @media (max-width:420px){
+    .stats{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- REDUCED MOTION: disable all scroll motion ---------- */
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal,.stagger > *{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .bars .fill{ transition:none !important; }
+    .btn:hover{ transform:none; }
+  }
 </style>
 
-<main>
-  <h1>Pricing engine — scaffold preview</h1>
-  <p class="note">This temporary page shows the CONFIG-driven math working. The full designed media kit gets built on top of this same engine next.</p>
+<a class="skip" href="#main">Skip to content</a>
 
-  <h2>Podcast status</h2>
-  <div id="podcastStatus" class="card"></div>
+<!-- ============================== NAV ============================== -->
+<nav class="top" aria-label="Primary">
+  <div class="bar">
+    <div class="brand">Peter <span>Lohmann</span></div>
+    <div class="links">
+      <a href="#about">About</a>
+      <a href="#audience">Audience</a>
+      <a href="#book">What to Book</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#bundles">Bundles</a>
+      <a href="#deals">Deals</a>
+    </div>
+    <a class="btn btn-navy btn-sm book" id="navBook" href="#">Book / Contact</a>
+  </div>
+</nav>
 
-  <h2>Auto-computed bundles</h2>
-  <div id="bundles"></div>
+<main id="main">
 
-  <h2>Self-check (§5 validation targets)</h2>
-  <div id="selfcheck" class="card"></div>
-  <p class="note">Open the browser console (or run this file with Node) to see the same assertions logged.</p>
+  <!-- ============================== HERO (§4.1) ============================== -->
+  <header class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <p class="eyebrow reveal">Partner With</p>
+      <h1 id="hero-title" class="reveal">Peter Lohmann</h1>
+      <p class="subtitle reveal">Sponsorship &amp; Media Opportunities · 2026</p>
+      <p class="tagline reveal">Targeted exposure to over 20,000 property management professionals, every week.</p>
+      <div class="cta-row reveal">
+        <a class="btn btn-primary" id="heroBook" href="#">Book a Partnership</a>
+        <a class="btn btn-ghost" href="#pricing">See Pricing</a>
+      </div>
+      <p class="foot reveal">
+        <a id="heroSite" href="#" target="_blank" rel="noopener">peterlohmann.com</a>
+        &nbsp;•&nbsp;
+        <a id="heroEmail" href="#">aswensen@rlpmg.com</a>
+      </p>
+    </div>
+  </header>
+
+  <!-- ============================== ABOUT (§4.2) ============================== -->
+  <section id="about" class="band" aria-labelledby="about-h">
+    <div class="wrap">
+      <span class="kicker reveal">About Peter</span>
+      <div class="about-grid mt-sm">
+        <!-- SWAP: to use a real photo, set src below to Peter's headshot and delete the .mono span. Keep the circular crop. -->
+        <div class="headshot reveal" role="img" aria-label="Portrait placeholder for Peter Lohmann">
+          <!-- <img src="peter-headshot.jpg" alt="Peter Lohmann" /> -->
+          <span class="mono" aria-hidden="true">PL</span>
+        </div>
+        <div class="about-body reveal">
+          <h2 id="about-h" class="sr-only" style="position:absolute;left:-9999px;">About Peter Lohmann</h2>
+          <p class="lead">Peter Lohmann is one of the most trusted and influential voices in property management today.</p>
+          <p>His newsletter and podcast reach over 20,000 property management company owners, vendors, and real estate investors every week.</p>
+          <p>He speaks at leading industry events including NARPM National &amp; Broker/Owner and LeadSimple University, and has been featured on top podcasts including Profitable Property Management and Top Floor.</p>
+          <p>As CEO of a 700+ unit property management company and co-founder of CRANE, an exclusive online community for PM operators, Peter combines real-world operator experience with polished, data-driven industry insights.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== WHY PARTNER (§4.3) ============================== -->
+  <section class="band wash" aria-labelledby="why-h">
+    <div class="wrap">
+      <span class="kicker reveal">Why Partner With Peter</span>
+      <h2 id="why-h" class="h-lead reveal">Reach the people who decide.</h2>
+      <div class="grid g4 stagger mt-md">
+        <div class="card"><div class="num-badge">1</div><h3>Hyper-Targeted</h3><p>Property management decision makers are our core audience, not a broad, diluted list.</p></div>
+        <div class="card"><div class="num-badge">2</div><h3>Built-In Trust</h3><p>Peter's reputation means your message gets real attention, not a reflexive scroll-past.</p></div>
+        <div class="card"><div class="num-badge">3</div><h3>Thought Leadership</h3><p>Position your brand as an expert resource, not a sales pitch.</p></div>
+        <div class="card"><div class="num-badge">4</div><h3>Multi-Channel Reach</h3><p>Broadcast via Newsletter, Podcast, YouTube, LinkedIn, and more.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== AUDIENCE (§4.4) ============================== -->
+  <section id="audience" class="band" aria-labelledby="aud-h">
+    <div class="wrap">
+      <span class="kicker reveal">Our Audience</span>
+      <h2 id="aud-h" class="h-lead reveal">A room full of operators and buyers.</h2>
+      <p class="sub reveal">A snapshot of who reads, listens, and acts on Peter's work.</p>
+      <div class="charts mt-md">
+        <div class="card chart-card reveal">
+          <h3>Audience by role</h3>
+          <div class="cap">Who makes up the audience</div>
+          <div id="roleBars" class="bars"></div>
+        </div>
+        <div class="card chart-card reveal">
+          <h3>Portfolio size</h3>
+          <div class="cap">Unit count among PM owner / operators</div>
+          <div id="unitDonut" class="donut-wrap"></div>
+        </div>
+        <div class="card chart-card reveal">
+          <h3>NARPM membership</h3>
+          <div class="cap">Reported by the audience</div>
+          <div id="narpmDonut" class="donut-wrap"></div>
+          <p class="chart-note">The majority of our audience aren't NARPM members, which gives you a great opportunity to reach potential customers outside of the usual industry circles.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== ENGAGEMENT (§4.5) ============================== -->
+  <section class="band wash" aria-labelledby="eng-h">
+    <div class="wrap">
+      <span class="kicker reveal">Engagement</span>
+      <h2 id="eng-h" class="sr-only" style="position:absolute;left:-9999px;">Engagement</h2>
+      <div class="stat-hero reveal">
+        <div class="big countup" data-target="250000" data-suffix="+">0</div>
+        <div class="lbl">total monthly impressions across all channels</div>
+      </div>
+      <div class="stats stagger">
+        <div class="stat"><div class="v countup" data-target="20000" data-suffix="+">0</div><div class="k">newsletter subscribers</div></div>
+        <div class="stat"><div class="v countup" data-target="7.41" data-decimals="2" data-suffix="%">0</div><div class="k">avg. newsletter click-thru rate</div></div>
+        <div class="stat"><div class="v countup" data-target="1300">0</div><div class="k">average new subscribers / month</div></div>
+        <div class="stat"><div class="v countup" data-target="800" data-suffix="+">0</div><div class="k">podcast listeners per episode</div></div>
+        <div class="stat"><div class="v">60-70%</div><div class="k">newsletter open rates</div></div>
+        <div class="stat"><div class="v countup" data-target="200000" data-suffix="+">0</div><div class="k">LinkedIn impressions / month</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== PHILOSOPHY (§4.6) ============================== -->
+  <section class="band" aria-labelledby="phil-h">
+    <div class="wrap">
+      <span class="kicker reveal">Advertising Philosophy</span>
+      <h2 id="phil-h" class="h-lead reveal">Brand equity, not banner noise.</h2>
+      <div class="grid g3 stagger mt-md">
+        <div class="card">
+          <h3>Build brand equity, not just clicks</h3>
+          <p>Advertising with Peter is an effective, low-friction way to position your brand as a trusted name in property management. The audience is highly engaged, niche-specific, and pays attention to thoughtful, well-placed messages.</p>
+        </div>
+        <div class="card">
+          <h3>Native ads, not banner noise</h3>
+          <p>No flashy, interruptive banners. Ads blend into the design and tone of the newsletters. They stand out because they resonate with an engaged audience, not because they scream for attention.</p>
+        </div>
+        <div class="card">
+          <h3>Who this is (and isn't) for</h3>
+          <p>This isn't Google or Facebook ads. If you're after quick conversions or performance-style metrics, this may not be the fit. Sponsorships are built to grow long-term brand awareness, credibility, and trust with a niche, high-value audience.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== PARTNERS (§4.7) ============================== -->
+  <section class="band wash" aria-labelledby="part-h">
+    <div class="wrap">
+      <span class="kicker reveal">Past &amp; Current Partners</span>
+      <h2 id="part-h" class="h-lead reveal">In good company.</h2>
+      <!--
+        SWAP: each slot shows a neutral text chip as the fallback. To drop in a real logo,
+        uncomment that slot's <img> line and set its src (keep the alt text). One line per logo.
+      -->
+      <div class="logos stagger mt-md">
+        <div class="logo-slot"><!-- <img src="logos/appfolio.svg" alt="AppFolio"> --><span>AppFolio</span></div>
+        <div class="logo-slot"><!-- <img src="logos/second-nature.svg" alt="Second Nature"> --><span>Second Nature</span></div>
+        <div class="logo-slot"><!-- <img src="logos/leadsimple.svg" alt="LeadSimple"> --><span>LeadSimple</span></div>
+        <div class="logo-slot"><!-- <img src="logos/buildium.svg" alt="Buildium (A RealPage Company)"> --><span>Buildium<br><small style="color:var(--muted-2);font-weight:500;">A RealPage Company</small></span></div>
+        <div class="logo-slot"><!-- <img src="logos/property-meld.svg" alt="Property Meld"> --><span>Property Meld</span></div>
+        <div class="logo-slot"><!-- <img src="logos/rentengine.svg" alt="RentEngine"> --><span>RentEngine</span></div>
+        <div class="logo-slot"><!-- <img src="logos/apm-help.svg" alt="APM Help"> --><span>APM Help</span></div>
+        <div class="logo-slot"><!-- <img src="logos/enterprise-bank.svg" alt="Enterprise Bank & Trust"> --><span>Enterprise Bank &amp; Trust</span></div>
+        <div class="logo-slot"><!-- <img src="logos/utility-profit.svg" alt="Utility Profit"> --><span>Utility Profit</span></div>
+        <div class="logo-slot"><!-- <img src="logos/planomatic.svg" alt="PlanOmatic"> --><span>PlanOmatic</span></div>
+        <div class="logo-slot"><!-- <img src="logos/boom.svg" alt="boom"> --><span>boom</span></div>
+        <div class="logo-slot"><!-- <img src="logos/rentvine.svg" alt="Rentvine"> --><span>Rentvine</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== WHAT YOU CAN BOOK (§4.8) ============================== -->
+  <section id="book" class="band" aria-labelledby="book-h">
+    <div class="wrap">
+      <span class="kicker reveal">What You Can Book</span>
+      <h2 id="book-h" class="h-lead reveal">Three ways to show up.</h2>
+      <div class="grid g3 stagger mt-md">
+        <div class="card book-col">
+          <h3>Newsletter</h3>
+          <p>Twice-weekly insights (Tuesday &amp; Friday) on PM news, events, and Peter's perspectives.</p>
+          <ul>
+            <li>One Primary slot + one Secondary slot per Friday issue</li>
+            <li>One Primary slot per Tuesday issue</li>
+            <li>Every issue is emailed and published online</li>
+          </ul>
+        </div>
+        <div class="card book-col">
+          <h3>Podcast</h3>
+          <p>Peter interviews industry professionals to explore trends and uncover insights.</p>
+          <ul>
+            <li>Two ad slots per episode (up to 90 seconds each)</li>
+            <li>Both placed within the first two-thirds of the episode</li>
+            <li>Airs every other Thursday</li>
+          </ul>
+          <span id="podcastBookTag"></span>
+        </div>
+        <div class="card book-col">
+          <h3>Bundles &amp; Extras</h3>
+          <p>Combine channels for more exposure and better economics.</p>
+          <ul>
+            <li>Bundle newsletter + podcast + social</li>
+            <li>Unlock discounts by booking multiple months</li>
+            <li>Lock out competitors for your term</li>
+            <li>Request premiere date spots before industry events</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== AD FORMAT REFERENCE (§4.9) ============================== -->
+  <section class="band wash" aria-labelledby="fmt-h">
+    <div class="wrap">
+      <span class="kicker reveal">Ad Format Reference</span>
+      <h2 id="fmt-h" class="h-lead reveal">What each placement looks like.</h2>
+      <div class="grid g2 mt-md">
+        <div class="reveal">
+          <h3 style="margin-bottom:14px;">Newsletter</h3>
+          <!-- Stylized MOCK ad frames — placeholder copy only, no real sponsor text. -->
+          <div class="mock" role="img" aria-label="Sample layout of a Primary newsletter ad (placeholder content)">
+            <div class="tagline-mini">Primary Ad · up to 675 characters</div>
+            <span class="mock-logo">[ YOUR LOGO ]</span>
+            <h4>Your headline goes here</h4>
+            <p>Placeholder body copy. A large, custom standout unit with text, images, logos, and your brand colors, about three-quarters of a desktop page.</p>
+            <span class="mock-cta">Your call to action</span>
+          </div>
+          <div class="mock secondary" role="img" aria-label="Sample layout of a Secondary newsletter ad (placeholder content)" style="margin-top:16px;">
+            <div class="tagline-mini">Secondary Ad · up to 256 characters · Friday</div>
+            <p>A one to two sentence plug with an embedded <span class="fake-link">hyperlink</span>, placed in the most-clicked section of the Friday issue.</p>
+          </div>
+        </div>
+        <div class="reveal">
+          <h3 style="margin-bottom:14px;">Podcast</h3>
+          <div class="card">
+            <ul class="feat">
+              <li>90-second ad read by Peter (audio + video)</li>
+              <li>Additional 90-second lingering logo + URL banner in the video version</li>
+              <li>"Sponsored by" name / logo shown during split-screen portions of the video</li>
+              <li>Links included in show notes and timestamps across platforms</li>
+            </ul>
+            <p class="fmt-meta">Two ad slots per episode, both within the first two-thirds of the run time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== A LA CARTE PRICING (§4.10) ============================== -->
+  <section id="pricing" class="band" aria-labelledby="price-h">
+    <div class="wrap">
+      <span class="kicker reveal">À-la-carte Pricing</span>
+      <h2 id="price-h" class="h-lead reveal">Pick exactly what you need.</h2>
+      <div id="alacarte" class="grid g4 stagger mt-md"></div>
+      <p id="mixMatchNote" class="muted-note"></p>
+    </div>
+  </section>
+
+  <!-- ============================== SEASON PROGRAMS (§4.11) ============================== -->
+  <section class="band wash" aria-labelledby="season-h">
+    <div class="wrap">
+      <span class="kicker reveal">Season Partnership Programs</span>
+      <h2 id="season-h" class="h-lead reveal">Own the whole season.</h2>
+      <div id="seasons" class="grid g2 stagger mt-md"></div>
+    </div>
+  </section>
+
+  <!-- ============================== MULTI-CHANNEL BUNDLES (§4.12) ============================== -->
+  <section id="bundles" class="band" aria-labelledby="bund-h">
+    <div class="wrap">
+      <span class="kicker reveal">Multi-Channel Bundles</span>
+      <h2 id="bund-h" class="h-lead reveal">More channels, better economics.</h2>
+      <p class="sub reveal">Prices and savings are calculated live from the line items, so they never drift.</p>
+      <div id="bundleCards" class="grid g2 stagger mt-md"></div>
+      <div class="mt-lg">
+        <h3 class="reveal" style="font-size:20px;margin-bottom:14px;">Discounts &amp; extras</h3>
+        <div id="extras" class="card extras-card reveal"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== URGENT DEALS (§4.13) ============================== -->
+  <section id="deals" class="band deals-band" aria-labelledby="deals-h">
+    <div class="wrap">
+      <span class="kicker reveal" style="background:#fbe1d3;color:var(--orange-dark);">Urgent Deals</span>
+      <h2 id="deals-h" class="h-lead reveal">Discounted, soon-to-air slots.</h2>
+      <p class="sub reveal">Open inventory at a discount. First to email locks it in.</p>
+      <div id="dealsBoard" class="grid g3 stagger mt-md"></div>
+    </div>
+  </section>
+
+  <!-- ============================== CONSULTING (§4.14) ============================== -->
+  <section class="band" aria-labelledby="consult-h">
+    <div class="wrap">
+      <span class="kicker reveal">Consulting &amp; Coaching</span>
+      <h2 id="consult-h" class="h-lead reveal">Strategic insights from a proven operator.</h2>
+      <p class="consult-lead reveal mt-sm">From executive coaching to tactical deep dives. Peter helps you find clarity, build momentum, and leave with practical next steps.</p>
+      <div id="consulting" class="grid g3 stagger mt-md"></div>
+    </div>
+  </section>
+
+  <!-- ============================== HOW TO BOOK (§4.15) ============================== -->
+  <section id="contact" class="band">
+    <div class="wrap">
+      <div class="cta-final reveal">
+        <h2>Let's build the right partnership.</h2>
+        <p>Email <a class="mail" id="ctaEmail" href="#">Andrew Swensen</a> for questions, availability, and to reserve your spot.</p>
+        <p>Spots fill quickly, especially for high-impact dates. Lock in your bundle to secure preferred placement.</p>
+        <p>Looking for something custom? Mix and match ad placements, consulting, and exclusivity options, and we'll build the right package.</p>
+        <a class="btn btn-primary" id="ctaButton" href="#">Email to Reserve Your Spot</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="wrap">
+      <p><a id="footSite" href="#" target="_blank" rel="noopener">peterlohmann.com</a> &nbsp;•&nbsp; <a id="footEmail" href="#">aswensen@rlpmg.com</a></p>
+      <p style="margin:0;">Peter Lohmann · Sponsorship &amp; Media · 2026</p>
+    </div>
+  </footer>
+
 </main>
 
 <script>
@@ -109,8 +698,28 @@ const CONFIG = {
 
   // ---- SEASON PROGRAMS (podcast-gated) ----
   seasonPrograms: [
-    { id: "presenting", name: "Presenting Partner",      price: 35000, valueNote: "$50,000+ value", requiresPodcast: true },
-    { id: "halfseason", name: "Half-Season Sponsorship", price: 16500, valueNote: "$22,000+ value", requiresPodcast: true },
+    {
+      id: "presenting", name: "Presenting Partner", price: 35000,
+      valueNote: "$50,000+ value", requiresPodcast: true,
+      blurb: "Full-season sponsorship (25 episodes).",
+      features: [
+        "\"Season is brought to you by [your company]\" intro read on every episode",
+        "A 90-second ad on every episode (one free ad read by Peter per quarter)",
+        "Peter hosts a fireside chat at your HQ or company event (or via Zoom; travel billed separately)",
+        "Listed as Presenting Partner on the podcast landing page",
+        "One dedicated episode featuring a guest from your company",
+        "Peter appears on your podcast, webinar, or chosen media",
+      ],
+    },
+    {
+      id: "halfseason", name: "Half-Season Sponsorship", price: 16500,
+      valueNote: "$22,000+ value", requiresPodcast: true,
+      blurb: "12 episodes.",
+      features: [
+        "A 90-second sponsored ad on every episode",
+        "One free ad read by Peter per quarter ($250 value)",
+      ],
+    },
   ],
 
   // ---- EXTRAS / STANDING DISCOUNTS ----
@@ -130,6 +739,7 @@ const CONFIG = {
 
   // ---- URGENT DEALS BOARD — edit this array anytime ----
   // Each deal: { slot, date, original, deal, note?, expires? }  (dates "YYYY-MM-DD")
+  // Deals sort soonest-first automatically; any deal past its `expires` date auto-hides.
   urgentDeals: [
     // { slot: "Primary Newsletter Ad", date: "2026-07-18", original: 3500, deal: 2500, note: "Friday issue", expires: "2026-07-16" },
   ],
@@ -140,13 +750,13 @@ const CONFIG = {
    ========================================================================== */
 
 // Format a number as $X,XXX (no cents).
-function money(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+function money(n){ return "$" + Math.round(n).toLocaleString("en-US"); }
 
 // Round a value UP to the nearest `step` dollars (5 → nearest $5).
-function roundUpTo(value, step) { return Math.ceil(value / step) * step; }
+function roundUpTo(value, step){ return Math.ceil(value / step) * step; }
 
 // Is a product currently sellable? Active AND (not podcast-gated OR podcast is back).
-function productCounts(prod) {
+function productCounts(prod){
   if (!prod) return false;
   if (prod.active === false) return false;
   if (prod.requiresPodcast && !CONFIG.podcast.available) return false;
@@ -154,128 +764,356 @@ function productCounts(prod) {
 }
 
 // Compute everything about a bundle from its components.
-// Returns { sum, price, savingsPct, lines:[{label, qty, counts, requiresPodcast}] }
-function computeBundle(bundle) {
-  let sum = 0;
-  const lines = bundle.components.map(function (c) {
+// Returns { sum, price, savingsPct, hasDropped, lines:[...] }
+function computeBundle(bundle){
+  let sum = 0, hasDropped = false;
+  const lines = bundle.components.map(function(c){
     const prod = CONFIG.products[c.product];
     const counts = productCounts(prod);
     if (counts) sum += prod.price * c.qty;
-    return {
-      label: prod.label, qty: c.qty, counts: counts,
-      requiresPodcast: !!prod.requiresPodcast, price: prod.price,
-    };
+    else if (prod && prod.requiresPodcast) hasDropped = true;
+    return { key:c.product, label:prod.label, qty:c.qty, counts:counts,
+             requiresPodcast:!!prod.requiresPodcast, price:prod.price };
   });
   const price = roundUpTo(sum * (1 - bundle.discount), CONFIG.bundleRounding);
   const savingsPct = Math.round(bundle.discount * 100);
-  return { sum: sum, price: price, savingsPct: savingsPct, lines: lines };
+  return { sum:sum, price:price, savingsPct:savingsPct, hasDropped:hasDropped, lines:lines };
 }
 
 // Discount % for an urgent deal.
-function dealPct(d) { return Math.round((d.original - d.deal) / d.original * 100); }
+function dealPct(d){ return Math.round((d.original - d.deal) / d.original * 100); }
 
 // Pretty date: "2026-11-12" → "November 12, 2026"  (parsed as local, no timezone drift).
-function prettyDate(iso) {
+function prettyDate(iso){
   const p = iso.split("-");
   const months = ["January","February","March","April","May","June","July",
                   "August","September","October","November","December"];
-  return months[parseInt(p[1],10) - 1] + " " + parseInt(p[2],10) + ", " + p[0];
+  return months[parseInt(p[1],10)-1] + " " + parseInt(p[2],10) + ", " + p[0];
 }
+function returnDateStr(){ return prettyDate(CONFIG.podcast.returnDate); }
 
 /* ==========================================================================
    SELF-CHECK  —  asserts the §5 validation targets in BOTH podcast states.
-   Logs to console; also returns results so the page can display them.
+   Logs to console (dev aid); does not affect the page.
    ========================================================================== */
-function runSelfCheck() {
+function runSelfCheck(){
   const results = [];
-  function check(label, got, want) {
+  function check(label, got, want){
     const pass = got === want;
-    results.push({ label: label, got: got, want: want, pass: pass });
-    var line = (pass ? "✓ PASS" : "✗ FAIL") + "  " + label + "  got " + got + "  want " + want;
-    if (pass) console.log("%c" + line, "color:#2e7d32");
-    else      console.error(line);
-    return pass;
+    results.push({ label:label, got:got, want:want, pass:pass });
+    const line = (pass?"✓ PASS":"✗ FAIL") + "  " + label + "  got " + got + "  want " + want;
+    if (pass) console.log("%c"+line, "color:#2e7d32"); else console.error(line);
   }
-  const savedAvailable = CONFIG.podcast.available;   // remember, so we can restore
-
-  // --- podcast SOLD OUT state ---
+  const saved = CONFIG.podcast.available;
   CONFIG.podcast.available = false;
-  const mOff = computeBundle(CONFIG.bundles[0]);
-  const dOff = computeBundle(CONFIG.bundles[1]);
-  check("Momentum (podcast off) price",        mOff.price,      3610);
-  check("Market Domination (podcast off) price", dOff.price,    6365);
-  check("Momentum savings %",                  mOff.savingsPct, 24);
-  check("Market Domination savings %",         dOff.savingsPct, 33);
-
-  // --- podcast AVAILABLE state ---
+  const mOff = computeBundle(CONFIG.bundles[0]), dOff = computeBundle(CONFIG.bundles[1]);
+  check("Momentum (podcast off)",           mOff.price, 3610);
+  check("Market Domination (podcast off)",  dOff.price, 6365);
+  check("Momentum savings %",               mOff.savingsPct, 24);
+  check("Market Domination savings %",      dOff.savingsPct, 33);
   CONFIG.podcast.available = true;
-  const mOn = computeBundle(CONFIG.bundles[0]);
-  const dOn = computeBundle(CONFIG.bundles[1]);
-  check("Momentum (podcast on) price",         mOn.price,       5195);
-  check("Market Domination (podcast on) price", dOn.price,      9160);
-  check("Momentum savings % (on)",             mOn.savingsPct,  24);
-  check("Market Domination savings % (on)",    dOn.savingsPct,  33);
-
-  CONFIG.podcast.available = savedAvailable;          // restore real setting
-  const allPass = results.every(function (r) { return r.pass; });
-  console.log(allPass ? "%cALL SELF-CHECKS PASSED" : "%cSELF-CHECK FAILURES ABOVE",
-              "font-weight:bold;color:" + (allPass ? "#2e7d32" : "#c62828"));
-  return { results: results, allPass: allPass };
+  const mOn = computeBundle(CONFIG.bundles[0]), dOn = computeBundle(CONFIG.bundles[1]);
+  check("Momentum (podcast on)",            mOn.price, 5195);
+  check("Market Domination (podcast on)",   dOn.price, 9160);
+  check("Momentum savings % (on)",          mOn.savingsPct, 24);
+  check("Market Domination savings % (on)", dOn.savingsPct, 33);
+  CONFIG.podcast.available = saved;
+  const allPass = results.every(function(r){ return r.pass; });
+  console.log(allPass ? "%c✓ ALL PRICING SELF-CHECKS PASSED" : "%c✗ PRICING SELF-CHECK FAILURES ABOVE",
+              "font-weight:bold;color:"+(allPass?"#2e7d32":"#c62828"));
+  return allPass;
 }
 
 /* ==========================================================================
-   SCAFFOLD RENDER  —  minimal preview so you can eyeball the live numbers.
-   (This gets replaced by the full designed sections in the next step.)
+   CONTENT DATA for charts (audience stats — not prices, so not in CONFIG).
    ========================================================================== */
-function renderScaffold() {
-  // Podcast status line
-  var ps = CONFIG.podcast.available
-    ? "AVAILABLE — podcast products & season programs are live, podcast line items are in bundle math."
-    : "SOLD OUT until " + prettyDate(CONFIG.podcast.returnDate) +
-      " — podcast products grayed, season programs stamped SOLD OUT, podcast line items drop out of bundle math.";
-  document.getElementById("podcastStatus").innerHTML =
-    "<strong>CONFIG.podcast.available = " + CONFIG.podcast.available + "</strong><br>" + ps;
+const ROLE_DATA = [
+  { label:"PM Company Owner / Operator", pct:43 },
+  { label:"Work for a PM Company",       pct:18 },
+  { label:"PM Vendor",                   pct:11 },
+  { label:"Real Estate Investor",        pct:10 },
+  { label:"Want to start or buy a PM Co.",pct:9 },
+  { label:"Other",                       pct:9 },
+];
+const UNIT_DATA = [
+  { label:"Under 100 units", pct:12, color:"#1F3A4D" },
+  { label:"101-200 units",   pct:21, color:"#2C7CB0" },
+  { label:"201-350 units",   pct:19, color:"#4a95c4" },
+  { label:"351-500 units",   pct:17, color:"#7fb4d6" },
+  { label:"500-1,000 units", pct:17, color:"#a9cbe3" },
+  { label:"1,001+ units",    pct:13, color:"#E0703C" },
+];
+const NARPM_DATA = [
+  { label:"NARPM member",    pct:40, color:"#2C7CB0" },
+  { label:"Not a member",    pct:60, color:"#DCE7EF" },
+];
 
-  // Bundles
-  var html = "";
-  CONFIG.bundles.forEach(function (b) {
-    var r = computeBundle(b);
-    var accent = b.accent === "orange" ? " orange" : "";
-    var lines = r.lines.map(function (l) {
-      var dropped = !l.counts ? " dropped" : "";
-      var ret = (!l.counts && l.requiresPodcast)
-        ? ' <span class="note">(returns ' + prettyDate(CONFIG.podcast.returnDate) + ')</span>' : "";
-      return '<div class="li' + dropped + '">' + l.qty + "× " + l.label + ret + "</div>";
-    }).join("");
-    html +=
-      '<div class="card">' +
-        "<h3>" + b.name + '</h3>' +
-        lines +
-        '<p class="price">' + money(r.price) + '<span class="note"> /mo</span></p>' +
-        '<span class="badge' + accent + '">' + r.savingsPct + '% savings</span> ' +
-        '<span class="note">' + b.minTermMonths + '-month minimum · à-la-carte value ' + money(r.sum) + '</span>' +
-      "</div>";
+/* ==========================================================================
+   RENDER HELPERS
+   ========================================================================== */
+function el(html){ const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstChild; }
+
+// Build an SVG donut from [{label,pct,color}] using pathLength=100 so pct maps directly.
+function donutSVG(data, ariaLabel){
+  const size=176, sw=30, r=(size-sw)/2, c=size/2;
+  let off=0, segs="";
+  data.forEach(function(d){
+    segs += '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="none" stroke="'+d.color+'" stroke-width="'+sw+'"'
+          + ' pathLength="100" stroke-dasharray="'+d.pct+' '+(100-d.pct)+'" stroke-dashoffset="'+(-off)+'"'
+          + ' transform="rotate(-90 '+c+' '+c+')"></circle>';
+    off += d.pct;
   });
-  document.getElementById("bundles").innerHTML = html;
-
-  // Self-check panel
-  var sc = runSelfCheck();
-  var scHtml = sc.results.map(function (r) {
-    return '<div class="checkline ' + (r.pass ? "ok" : "fail") + '">' +
-           (r.pass ? "✓ PASS" : "✗ FAIL") + " — " + r.label +
-           " → got " + r.got + ", want " + r.want + "</div>";
-  }).join("");
-  scHtml += '<div class="checkline" style="margin-top:8px;font-weight:700;">' +
-            (sc.allPass ? '<span class="ok">ALL 8 CHECKS PASSED</span>'
-                        : '<span class="fail">SOME CHECKS FAILED</span>') + "</div>";
-  document.getElementById("selfcheck").innerHTML = scHtml;
+  return '<svg viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" role="img" aria-label="'+ariaLabel+'">'+segs+'</svg>';
+}
+function legend(data){
+  return '<div class="legend">' + data.map(function(d){
+    return '<div class="li"><span class="dot" style="background:'+d.color+'"></span>'+d.label+'<span class="lp">'+d.pct+'%</span></div>';
+  }).join("") + '</div>';
 }
 
-// Run in browser; also runnable under Node for a headless math check.
-if (typeof document !== "undefined") {
-  renderScaffold();
+function renderCharts(){
+  // Role bars
+  document.getElementById("roleBars").innerHTML = ROLE_DATA.map(function(d){
+    return '<div class="row"><span class="lbl">'+d.label+'</span><span class="pct">'+d.pct+'%</span>'
+         + '<span class="track"><span class="fill" style="--w:'+d.pct+'%"></span></span></div>';
+  }).join("");
+  // Unit donut
+  const uAria = "Portfolio size distribution: " + UNIT_DATA.map(function(d){return d.label+" "+d.pct+"%";}).join(", ");
+  document.getElementById("unitDonut").innerHTML = donutSVG(UNIT_DATA, uAria) + legend(UNIT_DATA);
+  // NARPM donut
+  const nAria = "NARPM membership: 40% member, 60% not a member";
+  document.getElementById("narpmDonut").innerHTML = donutSVG(NARPM_DATA, nAria) + legend(NARPM_DATA);
+}
+
+// ----- A la carte cards (§4.10) -----
+function renderAlaCarte(){
+  const order = ["primaryNewsletter","secondaryNewsletter","podcastAd","podcastRead"];
+  const desc = {
+    primaryNewsletter:"Friday & Tuesday issues",
+    secondaryNewsletter:"Friday issue only",
+    podcastAd:"2 slots per episode",
+    podcastRead:"Add-on · read live by Peter",
+  };
+  const wrap = document.getElementById("alacarte");
+  wrap.innerHTML = order.map(function(key){
+    const p = CONFIG.products[key];
+    const gated = p.requiresPodcast && !CONFIG.podcast.available;
+    const soldClass = gated ? " is-soldout" : "";
+    const chip = gated ? '<div style="margin-top:12px;"><span class="chip chip-soldout">Sold out until '+returnDateStr()+'</span></div>' : "";
+    return '<div class="price-card'+soldClass+'">'
+         +   '<h3>'+p.label+'</h3>'
+         +   '<div class="desc">'+(desc[key]||"")+'</div>'
+         +   '<div class="amt">'+money(p.price)+'</div>'
+         +   chip
+         + '</div>';
+  }).join("");
+  document.getElementById("mixMatchNote").innerHTML =
+    "<b>Save "+Math.round(CONFIG.extras.mixMatchDiscount*100)+"%</b> when you mix and match 6 or more of any newsletter or podcast ad.";
+}
+
+// ----- Season programs (§4.11) -----
+function renderSeasons(){
+  const wrap = document.getElementById("seasons");
+  wrap.innerHTML = CONFIG.seasonPrograms.map(function(s){
+    const gated = s.requiresPodcast && !CONFIG.podcast.available;
+    const soldClass = gated ? " is-soldout" : "";
+    const ribbon = gated ? '<div class="ribbon">SOLD OUT</div>' : "";
+    const feats = '<ul class="feat">' + s.features.map(function(f){ return "<li>"+f+"</li>"; }).join("") + '</ul>';
+    const avail = (gated && s.id==="halfseason")
+      ? '<p class="tag tag-warn" style="margin-top:14px;">Available starting '+returnDateStr()+'</p>' : "";
+    return '<div class="card season-card'+soldClass+'">'
+         +   ribbon
+         +   '<h3>'+s.name+'</h3>'
+         +   '<p style="color:var(--muted);font-size:15px;margin:2px 0 8px;">'+s.blurb+'</p>'
+         +   '<div class="amt" style="font-size:34px;font-weight:700;color:var(--navy);letter-spacing:-.02em;">'+money(s.price)+'</div>'
+         +   '<div class="value-note">'+s.valueNote+'</div>'
+         +   feats
+         +   avail
+         + '</div>';
+  }).join("");
+}
+
+// ----- Bundles (§4.12) -----
+function renderBundles(){
+  const wrap = document.getElementById("bundleCards");
+  wrap.innerHTML = CONFIG.bundles.map(function(b){
+    const r = computeBundle(b);
+    const orange = b.accent === "orange" ? " orange" : "";
+    const lines = r.lines.map(function(l){
+      const dropped = !l.counts ? " dropped" : "";
+      const ret = (!l.counts && l.requiresPodcast) ? ' <span class="ret">returns '+returnDateStr()+'</span>' : "";
+      return '<li class="'+dropped.trim()+'"><span class="q">'+l.qty+'×</span><span class="name">'+l.label+'</span>'+ret+'</li>';
+    }).join("");
+    const rejoin = r.hasDropped ? '<div class="rejoin">Podcast slots rejoin this bundle '+returnDateStr()+'. The price shown already reflects podcast being out.</div>' : "";
+    return '<div class="bundle'+orange+'">'
+         +   '<div class="b-top"><h3>'+b.name+'</h3><span class="save">'+r.savingsPct+'% savings</span></div>'
+         +   '<div class="price">'+money(r.price)+'<small> /mo</small></div>'
+         +   '<div class="term">'+b.minTermMonths+'-month minimum · à-la-carte value '+money(r.sum)+'</div>'
+         +   '<ul class="lines">'+lines+'</ul>'
+         +   rejoin
+         + '</div>';
+  }).join("");
+}
+
+// ----- Discounts & extras (§4.12) -----
+function renderExtras(){
+  const x = CONFIG.extras;
+  document.getElementById("extras").innerHTML =
+    '<ul>'
+    + '<li><span>'+Math.round(x.sixMonthDiscount*100)+'% off the monthly price for a 6-month commitment</span><span class="ev">-'+Math.round(x.sixMonthDiscount*100)+'%</span></li>'
+    + '<li><span>Exclusivity add-on (prevent competitors from advertising during your term)</span><span class="ev">'+money(x.exclusivityAddon)+' /mo</span></li>'
+    + '<li><span>Podcast guest appearance (fee waived with Market Domination)</span><span class="ev">'+money(x.podcastGuestAppearance)+'</span></li>'
+    + '</ul>';
+}
+
+// ----- Urgent deals (§4.13) -----
+function renderDeals(){
+  const board = document.getElementById("dealsBoard");
+  const now = new Date();
+  // Auto-hide any deal whose `expires` date has already passed (compared to today).
+  let deals = CONFIG.urgentDeals.filter(function(d){
+    if (!d.expires) return true;
+    return new Date(d.expires + "T23:59:59") >= now;
+  });
+  // Sort soonest-first by air/issue date.
+  deals = deals.slice().sort(function(a,b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+
+  if (deals.length === 0){
+    board.className = "";  // drop the grid so the empty state spans full width
+    board.innerHTML =
+      '<div class="deal-empty">No open deals right now. '
+      + '<a href="mailto:'+CONFIG.contactEmail+'?subject=Availability%20request">Email to ask about availability</a>.</div>';
+    return;
+  }
+  board.className = "grid g3 stagger in";
+  board.innerHTML = deals.map(function(d){
+    const note = d.note ? '<div class="when">'+d.note+'</div>' : "";
+    const exp = d.expires ? '<div><span class="exp">Expires '+prettyDate(d.expires)+'</span></div>' : "";
+    return '<div class="deal-card">'
+         +   '<div class="slot">'+d.slot+'</div>'
+         +   '<div class="when">Airs '+prettyDate(d.date)+'</div>'
+         +   note
+         +   '<div class="prices"><span class="was">'+money(d.original)+'</span>'
+         +     '<span class="now">'+money(d.deal)+'</span>'
+         +     '<span class="off">'+dealPct(d)+'% off</span></div>'
+         +   exp
+         + '</div>';
+  }).join("");
+}
+
+// ----- Consulting (§4.14) -----
+function renderConsulting(){
+  const c = CONFIG.consulting;
+  document.getElementById("consulting").innerHTML =
+    '<div class="card"><h3>Ad Copywriting Support</h3><div class="amt" style="font-size:26px;font-weight:700;color:var(--primary-dark);margin:6px 0;">'+c.adCopywriting+'</div><p>We craft ad copy in Peter\'s voice so your placement sounds native from day one.</p></div>'
+    + '<div class="card"><h3>Hourly Coaching</h3><div class="amt" style="font-size:34px;font-weight:700;color:var(--navy);margin:6px 0;">'+money(c.hourlyCoaching)+'<small style="font-size:15px;font-weight:600;color:var(--muted);"> /hour</small></div><p>One-on-one with Peter, focused on whatever you need to move forward.</p></div>'
+    + '<div class="card"><h3>Deep Dive Consulting Package</h3><div class="amt" style="font-size:34px;font-weight:700;color:var(--navy);margin:6px 0;">'+money(c.deepDive)+'</div><ul class="feat" style="margin-top:8px;"><li>12 one-on-one coaching sessions (60 min each)</li><li>6 tailored deep-dive sessions</li><li>Session recordings, action notes & support materials</li></ul></div>';
+}
+
+// ----- What-you-can-book podcast tag (§4.8) -----
+function renderBookTag(){
+  const t = document.getElementById("podcastBookTag");
+  t.innerHTML = CONFIG.podcast.available ? "" :
+    '<span class="tag tag-warn">Currently sold out, newsletter &amp; bundles available now</span>';
+}
+
+// ----- Wire up all contact links from CONFIG -----
+function wireContacts(){
+  const mailto = "mailto:" + CONFIG.contactEmail + "?subject=" + encodeURIComponent("Peter Lohmann sponsorship inquiry");
+  ["navBook","heroBook","ctaButton"].forEach(function(id){ document.getElementById(id).href = mailto; });
+  ["heroEmail","ctaEmail","footEmail"].forEach(function(id){ document.getElementById(id).href = "mailto:"+CONFIG.contactEmail; });
+  document.getElementById("heroEmail").textContent = CONFIG.contactEmail;
+  document.getElementById("footEmail").textContent = CONFIG.contactEmail;
+  const site = "https://" + CONFIG.siteUrl.replace(/^https?:\/\//,"");
+  ["heroSite","footSite"].forEach(function(id){
+    const a = document.getElementById(id); a.href = site; a.textContent = CONFIG.siteUrl;
+  });
+}
+
+/* ==========================================================================
+   MOTION  —  IntersectionObserver reveals + count-up (respect reduced motion)
+   ========================================================================== */
+const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function setupReveals(){
+  const targets = document.querySelectorAll(".reveal, .stagger");
+  if (REDUCED || !("IntersectionObserver" in window)){
+    targets.forEach(function(t){ t.classList.add("in"); });
+    return;
+  }
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { threshold:0.12, rootMargin:"0px 0px -8% 0px" });
+  targets.forEach(function(t){ io.observe(t); });
+}
+
+function countUp(node){
+  const target = parseFloat(node.getAttribute("data-target"));
+  const decimals = parseInt(node.getAttribute("data-decimals")||"0",10);
+  const suffix = node.getAttribute("data-suffix")||"";
+  function fmt(v){ return v.toLocaleString("en-US",{minimumFractionDigits:decimals,maximumFractionDigits:decimals}); }
+  if (REDUCED){ node.textContent = fmt(target)+suffix; return; }
+  const dur = 1200; let start = null;
+  function step(ts){
+    if (start===null) start = ts;
+    const p = Math.min((ts-start)/dur, 1);
+    const eased = 1 - Math.pow(1-p, 3);           // easeOutCubic
+    node.textContent = fmt(target*eased)+suffix;
+    if (p<1) requestAnimationFrame(step); else node.textContent = fmt(target)+suffix;
+  }
+  requestAnimationFrame(step);
+}
+function setupCountUps(){
+  const nums = document.querySelectorAll(".countup");
+  if (!("IntersectionObserver" in window)){ nums.forEach(countUp); return; }
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting){ countUp(e.target); io.unobserve(e.target); } });
+  }, { threshold:0.5 });
+  nums.forEach(function(n){ io.observe(n); });
+}
+
+/* ==========================================================================
+   IFRAME AUTO-HEIGHT (optional) — only runs when embedded in an iframe.
+   To size the iframe on Squarespace, add this in the PARENT page:
+     window.addEventListener('message', function(e){
+       if (e.data && e.data.plmKitHeight) document.querySelector('#plm-iframe').style.height = e.data.plmKitHeight + 'px';
+     });
+   ========================================================================== */
+function postHeight(){
+  if (window.parent === window) return;                 // not embedded → do nothing
+  const h = document.documentElement.scrollHeight;
+  window.parent.postMessage({ plmKitHeight:h }, "*");
+}
+
+/* ==========================================================================
+   BOOT
+   ========================================================================== */
+function boot(){
+  runSelfCheck();          // dev console assertions (§5 targets)
+  wireContacts();
+  renderCharts();
+  renderAlaCarte();
+  renderSeasons();
+  renderBundles();
+  renderExtras();
+  renderDeals();
+  renderConsulting();
+  renderBookTag();
+  setupReveals();
+  setupCountUps();
+  postHeight();
+  window.addEventListener("resize", postHeight);
+  window.addEventListener("load", postHeight);
+}
+
+if (typeof document !== "undefined"){
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
 } else {
+  // Node headless math check (run: node this-file after extracting the script)
   runSelfCheck();
-  module.exports = { CONFIG: CONFIG, computeBundle: computeBundle, roundUpTo: roundUpTo };
+  module.exports = { CONFIG:CONFIG, computeBundle:computeBundle, roundUpTo:roundUpTo };
 }
 </script>
