@@ -287,6 +287,52 @@
   .stagger.in > *:nth-child(5){ transition-delay:.28s; }
   .stagger.in > *:nth-child(6){ transition-delay:.35s; }
 
+  /* ---------- A-LA-CARTE: two-line title + bullets + add-on + mix pill ---------- */
+  .pc-title{ margin-bottom:10px; }
+  .pc-kicker{ display:block; font-size:27px; font-weight:700; color:var(--primary); letter-spacing:-.02em; line-height:1.04; }
+  .pc-rest{ display:block; font-size:19px; font-weight:600; color:var(--navy); }
+  .pc-bullets{ list-style:none; margin:16px 0 0; padding:0; }
+  .pc-bullets li{ position:relative; padding-left:22px; margin-bottom:8px; color:var(--muted); font-size:14.5px; line-height:1.45; }
+  .pc-bullets li::before{ content:"✓"; position:absolute; left:0; top:0; color:var(--primary); font-weight:700; }
+  .addon{ margin-top:18px; padding-top:16px; border-top:1px dashed var(--line); }
+  .addon-tag{ display:inline-block; background:var(--wash); color:var(--primary-dark); font-size:11.5px; font-weight:700;
+              letter-spacing:.08em; text-transform:uppercase; padding:3px 10px; border-radius:999px; margin-bottom:8px; }
+  .addon-row{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .addon-name{ font-weight:600; color:var(--navy); font-size:15.5px; }
+  .addon-price{ font-weight:700; color:var(--navy); font-size:21px; letter-spacing:-.02em; }
+  .addon-desc{ margin:5px 0 0; color:var(--muted); font-size:13.5px; }
+  .mix-wrap{ text-align:center; margin-top:32px; }
+  .mix-pill{ display:inline-block; background:var(--orange); color:#fff; font-weight:700;
+             font-size:clamp(16px,2vw,20px); line-height:1.35; padding:15px 30px; border-radius:999px;
+             box-shadow:0 8px 22px rgba(224,112,60,.28); max-width:100%; }
+
+  /* ---------- DISCOUNTS & EXTRAS: three cards ---------- */
+  .extra-card .extra-v{ font-size:33px; font-weight:700; color:var(--navy); letter-spacing:-.02em; }
+  .extra-card .extra-v small{ font-size:15px; color:var(--muted); font-weight:600; letter-spacing:0; }
+  .extra-card h4{ font-size:17px; margin:10px 0 6px; }
+  .extra-card p{ color:var(--muted); font-size:14.5px; margin:0; }
+
+  /* ---------- AD EXAMPLE PLACEHOLDERS ---------- */
+  .example-group{ margin-top:38px; }
+  .eg-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .eg-head h3{ font-size:21px; }
+  .eg-meta{ color:var(--muted); font-size:14px; }
+  .example-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .shot{ margin:0; border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--line); box-shadow:var(--shadow); }
+  .shot img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .shot iframe{ width:100%; height:100%; border:0; display:block; }
+  .shot.portrait{ aspect-ratio:4 / 5; }
+  .shot.wide{ aspect-ratio:16 / 8; }
+  .shot.yt-frame{ aspect-ratio:16 / 9; }
+  .shot .shot-inner{ width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;
+                     gap:6px; text-align:center; padding:18px; color:var(--muted-2);
+                     background:repeating-linear-gradient(45deg,#f7fafc,#f7fafc 12px,#eef4f9 12px,#eef4f9 24px); }
+  .shot .shot-ic{ color:var(--primary); opacity:.75; margin-bottom:2px; }
+  .shot .shot-label{ font-weight:700; color:var(--navy); font-size:15px; }
+  .shot .shot-sub{ font-size:12.5px; color:var(--muted-2); }
+  @media (max-width:820px){ .example-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px){ .example-grid{ grid-template-columns:1fr; } }
+
   /* ---------- RESPONSIVE ---------- */
   @media (max-width:960px){
     .charts{ grid-template-columns:1fr; }
@@ -362,10 +408,12 @@
     <div class="wrap">
       <span class="kicker reveal">About Peter</span>
       <div class="about-grid mt-sm">
-        <!-- SWAP: to use a real photo, set src below to Peter's headshot and delete the .mono span. Keep the circular crop. -->
-        <div class="headshot reveal" role="img" aria-label="Portrait placeholder for Peter Lohmann">
-          <!-- <img src="peter-headshot.jpg" alt="Peter Lohmann" /> -->
-          <span class="mono" aria-hidden="true">PL</span>
+        <!-- SWAP: drop a file named "peter-headshot.jpg" into this project folder and it appears automatically.
+             Until that file exists, the "PL" monogram shows as a fallback. Keep the circular crop. -->
+        <div class="headshot reveal" role="img" aria-label="Peter Lohmann">
+          <img id="peterPhoto" src="peter-headshot.jpg" alt="Peter Lohmann"
+               onerror="this.style.display='none';var m=document.getElementById('peterMono');if(m)m.style.display='flex';" />
+          <span id="peterMono" class="mono" aria-hidden="true" style="display:none;">PL</span>
         </div>
         <div class="about-body reveal">
           <h2 id="about-h" class="sr-only" style="position:absolute;left:-9999px;">About Peter Lohmann</h2>
@@ -526,39 +574,27 @@
     </div>
   </section>
 
-  <!-- ============================== AD FORMAT REFERENCE (§4.9) ============================== -->
-  <section class="band wash" aria-labelledby="fmt-h">
+  <!-- ============================== AD EXAMPLES (§4.9) ============================== -->
+  <!-- Placeholders are filled from MEDIA_EXAMPLES in the script. Drop in real screenshots / YouTube IDs there. -->
+  <section id="examples" class="band wash" aria-labelledby="fmt-h">
     <div class="wrap">
-      <span class="kicker reveal">Ad Format Reference</span>
-      <h2 id="fmt-h" class="h-lead reveal">What each placement looks like.</h2>
-      <div class="grid g2 mt-md">
-        <div class="reveal">
-          <h3 style="margin-bottom:14px;">Newsletter</h3>
-          <!-- Stylized MOCK ad frames — placeholder copy only, no real sponsor text. -->
-          <div class="mock" role="img" aria-label="Sample layout of a Primary newsletter ad (placeholder content)">
-            <div class="tagline-mini">Primary Ad · up to 675 characters</div>
-            <span class="mock-logo">[ YOUR LOGO ]</span>
-            <h4>Your headline goes here</h4>
-            <p>Placeholder body copy. A large, custom standout unit with text, images, logos, and your brand colors, about three-quarters of a desktop page.</p>
-            <span class="mock-cta">Your call to action</span>
-          </div>
-          <div class="mock secondary" role="img" aria-label="Sample layout of a Secondary newsletter ad (placeholder content)" style="margin-top:16px;">
-            <div class="tagline-mini">Secondary Ad · up to 256 characters · Friday</div>
-            <p>A one to two sentence plug with an embedded <span class="fake-link">hyperlink</span>, placed in the most-clicked section of the Friday issue.</p>
-          </div>
-        </div>
-        <div class="reveal">
-          <h3 style="margin-bottom:14px;">Podcast</h3>
-          <div class="card">
-            <ul class="feat">
-              <li>90-second ad read by Peter (audio + video)</li>
-              <li>Additional 90-second lingering logo + URL banner in the video version</li>
-              <li>"Sponsored by" name / logo shown during split-screen portions of the video</li>
-              <li>Links included in show notes and timestamps across platforms</li>
-            </ul>
-            <p class="fmt-meta">Two ad slots per episode, both within the first two-thirds of the run time.</p>
-          </div>
-        </div>
+      <span class="kicker reveal">Ad Examples</span>
+      <h2 id="fmt-h" class="h-lead reveal">See the placements in action.</h2>
+      <p class="sub reveal">A few real examples of each format. Sample slots are shown below; live examples drop in here.</p>
+
+      <div class="example-group reveal">
+        <div class="eg-head"><h3>Primary Newsletter Ad</h3><span class="eg-meta">Up to 675 characters · Friday &amp; Tuesday issues</span></div>
+        <div id="examplesPrimary" class="example-grid"></div>
+      </div>
+
+      <div class="example-group reveal">
+        <div class="eg-head"><h3>Secondary Newsletter Ad</h3><span class="eg-meta">Up to 256 characters · Friday issue</span></div>
+        <div id="examplesSecondary" class="example-grid"></div>
+      </div>
+
+      <div class="example-group reveal">
+        <div class="eg-head"><h3>Podcast Ad</h3><span class="eg-meta">90-second ad read · shown as a YouTube clip</span></div>
+        <div id="examplesPodcast" class="example-grid"></div>
       </div>
     </div>
   </section>
@@ -568,8 +604,8 @@
     <div class="wrap">
       <span class="kicker reveal">À-la-carte Pricing</span>
       <h2 id="price-h" class="h-lead reveal">Pick exactly what you need.</h2>
-      <div id="alacarte" class="grid g4 stagger mt-md"></div>
-      <p id="mixMatchNote" class="muted-note"></p>
+      <div id="alacarte" class="grid g3 stagger mt-md"></div>
+      <div id="mixMatchNote" class="mix-wrap"></div>
     </div>
   </section>
 
@@ -591,7 +627,7 @@
       <div id="bundleCards" class="grid g2 stagger mt-md"></div>
       <div class="mt-lg">
         <h3 class="reveal" style="font-size:20px;margin-bottom:14px;">Discounts &amp; extras</h3>
-        <div id="extras" class="card extras-card reveal"></div>
+        <div id="extras" class="grid g3 stagger"></div>
       </div>
     </div>
   </section>
@@ -741,7 +777,11 @@ const CONFIG = {
   // Each deal: { slot, date, original, deal, note?, expires? }  (dates "YYYY-MM-DD")
   // Deals sort soonest-first automatically; any deal past its `expires` date auto-hides.
   urgentDeals: [
-    // { slot: "Primary Newsletter Ad", date: "2026-07-18", original: 3500, deal: 2500, note: "Friday issue", expires: "2026-07-16" },
+    { slot: "Primary Newsletter Ad", date: "2026-07-14", original: 3500, deal: 3000, note: "Tuesday issue", expires: "2026-07-12" },
+    { slot: "Primary Newsletter Ad", date: "2026-07-21", original: 3500, deal: 3000, note: "Tuesday issue", expires: "2026-07-19" },
+    { slot: "Primary Newsletter Ad", date: "2026-07-28", original: 3500, deal: 3000, note: "Tuesday issue", expires: "2026-07-26" },
+    { slot: "Primary Newsletter Ad", date: "2026-08-11", original: 3500, deal: 3000, note: "Tuesday issue", expires: "2026-08-09" },
+    { slot: "Primary Newsletter Ad", date: "2026-08-18", original: 3500, deal: 3000, note: "Tuesday issue", expires: "2026-08-16" },
   ],
 };
 
@@ -849,6 +889,31 @@ const NARPM_DATA = [
 ];
 
 /* ==========================================================================
+   AD EXAMPLES  —  fill these in as real examples arrive.
+   NEWSLETTER: set `img` to a screenshot file you drop into this project folder,
+               e.g. img:"examples/primary-1.png". Leave "" to show an empty slot.
+   PODCAST:    set `youtube` to a YouTube video ID (the code after "v=" or "youtu.be/"),
+               e.g. youtube:"dQw4w9WgXcQ". Leave "" to show an empty video slot.
+   ========================================================================== */
+const MEDIA_EXAMPLES = {
+  primary: [
+    { img:"", alt:"Primary newsletter ad example 1" },
+    { img:"", alt:"Primary newsletter ad example 2" },
+    { img:"", alt:"Primary newsletter ad example 3" },
+  ],
+  secondary: [
+    { img:"", alt:"Secondary newsletter ad example 1" },
+    { img:"", alt:"Secondary newsletter ad example 2" },
+    { img:"", alt:"Secondary newsletter ad example 3" },
+  ],
+  podcast: [
+    { youtube:"", title:"Podcast ad example 1" },
+    { youtube:"", title:"Podcast ad example 2" },
+    { youtube:"", title:"Podcast ad example 3" },
+  ],
+};
+
+/* ==========================================================================
    RENDER HELPERS
    ========================================================================== */
 function el(html){ const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstChild; }
@@ -885,30 +950,76 @@ function renderCharts(){
   document.getElementById("narpmDonut").innerHTML = donutSVG(NARPM_DATA, nAria) + legend(NARPM_DATA);
 }
 
-// ----- A la carte cards (§4.10) -----
-function renderAlaCarte(){
-  const order = ["primaryNewsletter","secondaryNewsletter","podcastAd","podcastRead"];
-  const desc = {
-    primaryNewsletter:"Friday & Tuesday issues",
-    secondaryNewsletter:"Friday issue only",
-    podcastAd:"2 slots per episode",
-    podcastRead:"Add-on · read live by Peter",
-  };
-  const wrap = document.getElementById("alacarte");
-  wrap.innerHTML = order.map(function(key){
-    const p = CONFIG.products[key];
-    const gated = p.requiresPodcast && !CONFIG.podcast.available;
-    const soldClass = gated ? " is-soldout" : "";
-    const chip = gated ? '<div style="margin-top:12px;"><span class="chip chip-soldout">Sold out until '+returnDateStr()+'</span></div>' : "";
-    return '<div class="price-card'+soldClass+'">'
-         +   '<h3>'+p.label+'</h3>'
-         +   '<div class="desc">'+(desc[key]||"")+'</div>'
-         +   '<div class="amt">'+money(p.price)+'</div>'
-         +   chip
-         + '</div>';
+// ----- Ad example placeholders (§4.9) -----
+function shotPlaceholder(isVideo, label){
+  const ic = isVideo
+    ? '<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4.5" width="20" height="15" rx="3"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>'
+    : '<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg>';
+  return '<div class="shot-inner"><div class="shot-ic">'+ic+'</div>'
+       + '<div class="shot-label">'+label+'</div>'
+       + '<div class="shot-sub">'+(isVideo?'YouTube clip goes here':'screenshot goes here')+'</div></div>';
+}
+function renderExamples(){
+  document.getElementById("examplesPrimary").innerHTML = MEDIA_EXAMPLES.primary.map(function(e,i){
+    const inner = e.img ? '<img src="'+e.img+'" alt="'+e.alt+'">' : shotPlaceholder(false, "Example "+(i+1));
+    return '<figure class="shot portrait">'+inner+'</figure>';
   }).join("");
+  document.getElementById("examplesSecondary").innerHTML = MEDIA_EXAMPLES.secondary.map(function(e,i){
+    const inner = e.img ? '<img src="'+e.img+'" alt="'+e.alt+'">' : shotPlaceholder(false, "Example "+(i+1));
+    return '<figure class="shot wide">'+inner+'</figure>';
+  }).join("");
+  document.getElementById("examplesPodcast").innerHTML = MEDIA_EXAMPLES.podcast.map(function(e,i){
+    const inner = e.youtube
+      ? '<iframe src="https://www.youtube.com/embed/'+e.youtube+'" title="'+e.title+'" allowfullscreen loading="lazy"></iframe>'
+      : shotPlaceholder(true, "Video "+(i+1));
+    return '<figure class="shot yt-frame">'+inner+'</figure>';
+  }).join("");
+}
+
+// ----- A la carte cards (§4.10): three boxes, two-line blue titles, bullets, podcast add-on -----
+function renderAlaCarte(){
+  const P = CONFIG.products;
+  const bullets = {
+    primary:   ["Runs in the Friday &amp; Tuesday issues","A large standout unit with your logo, images, and CTA","Emailed and published online"],
+    secondary: ["Friday issue only","A 1-2 sentence plug with an embedded link","Placed in the most-clicked section"],
+    podcast:   ["Two ad slots per episode (up to 90 seconds each)","Placed in the first two-thirds of the episode","Airs every other Thursday"],
+  };
+  function bl(arr){ return '<ul class="pc-bullets">'+arr.map(function(b){return "<li>"+b+"</li>";}).join("")+'</ul>'; }
+  function title(first, rest){ return '<div class="pc-title"><span class="pc-kicker">'+first+'</span><span class="pc-rest">'+rest+'</span></div>'; }
+
+  const podGated = P.podcastAd.requiresPodcast && !CONFIG.podcast.available;
+  const chip = podGated ? '<div style="margin-top:12px;"><span class="chip chip-soldout">Sold out until '+returnDateStr()+'</span></div>' : "";
+
+  let html = "";
+  // 1. Primary Newsletter Ad
+  html += '<div class="price-card">'
+        +   title("Primary","Newsletter Ad")
+        +   '<div class="amt">'+money(P.primaryNewsletter.price)+'</div>'
+        +   bl(bullets.primary)
+        + '</div>';
+  // 2. Secondary Newsletter Ad
+  html += '<div class="price-card">'
+        +   title("Secondary","Newsletter Ad")
+        +   '<div class="amt">'+money(P.secondaryNewsletter.price)+'</div>'
+        +   bl(bullets.secondary)
+        + '</div>';
+  // 3. Podcast Ad Slot  (+ Podcast Ad Read add-on pinned to the bottom)
+  html += '<div class="price-card'+(podGated?" is-soldout":"")+'">'
+        +   title("Podcast","Ad Slot")
+        +   '<div class="amt">'+money(P.podcastAd.price)+'</div>'
+        +   bl(bullets.podcast)
+        +   chip
+        +   '<div class="addon">'
+        +     '<div class="addon-tag">Add-on</div>'
+        +     '<div class="addon-row"><span class="addon-name">'+P.podcastRead.label+'</span><span class="addon-price">'+money(P.podcastRead.price)+'</span></div>'
+        +     '<p class="addon-desc">Have Peter read your ad live for extra credibility.</p>'
+        +   '</div>'
+        + '</div>';
+  document.getElementById("alacarte").innerHTML = html;
+
+  // Mix & match — prominent orange pill
   document.getElementById("mixMatchNote").innerHTML =
-    "<b>Save "+Math.round(CONFIG.extras.mixMatchDiscount*100)+"%</b> when you mix and match 6 or more of any newsletter or podcast ad.";
+    '<span class="mix-pill">Save '+Math.round(CONFIG.extras.mixMatchDiscount*100)+'% when you mix and match 6 or more of any newsletter or podcast ad</span>';
 }
 
 // ----- Season programs (§4.11) -----
@@ -955,15 +1066,17 @@ function renderBundles(){
   }).join("");
 }
 
-// ----- Discounts & extras (§4.12) -----
+// ----- Discounts & extras (§4.12): three cards -----
 function renderExtras(){
   const x = CONFIG.extras;
+  const pct = Math.round(x.sixMonthDiscount*100);
   document.getElementById("extras").innerHTML =
-    '<ul>'
-    + '<li><span>'+Math.round(x.sixMonthDiscount*100)+'% off the monthly price for a 6-month commitment</span><span class="ev">-'+Math.round(x.sixMonthDiscount*100)+'%</span></li>'
-    + '<li><span>Exclusivity add-on (prevent competitors from advertising during your term)</span><span class="ev">'+money(x.exclusivityAddon)+' /mo</span></li>'
-    + '<li><span>Podcast guest appearance (fee waived with Market Domination)</span><span class="ev">'+money(x.podcastGuestAppearance)+'</span></li>'
-    + '</ul>';
+      '<div class="card extra-card"><div class="extra-v">'+pct+'% off</div>'
+    +   '<h4>6-Month Commitment</h4><p>Lock in a 6-month term and take '+pct+'% off your monthly bundle price.</p></div>'
+    + '<div class="card extra-card"><div class="extra-v">'+money(x.exclusivityAddon)+'<small> /mo</small></div>'
+    +   '<h4>Exclusivity Add-on</h4><p>Prevent competitors from advertising during your term, so your brand owns the category.</p></div>'
+    + '<div class="card extra-card"><div class="extra-v">'+money(x.podcastGuestAppearance)+'</div>'
+    +   '<h4>Podcast Guest Appearance</h4><p>Join Peter on the podcast. This fee is waived with the Market Domination bundle.</p></div>';
 }
 
 // ----- Urgent deals (§4.13) -----
@@ -1094,6 +1207,7 @@ function boot(){
   runSelfCheck();          // dev console assertions (§5 targets)
   wireContacts();
   renderCharts();
+  renderExamples();
   renderAlaCarte();
   renderSeasons();
   renderBundles();
