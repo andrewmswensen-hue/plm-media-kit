@@ -175,11 +175,13 @@
   .stat .k{ color:var(--muted); font-size:14.5px; margin-top:4px; }
 
   /* ---------- PARTNERS ---------- */
-  .logos{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-  .logo-slot{ height:76px; border:1px solid var(--line); border-radius:var(--radius-sm); background:#fff;
-              display:flex; align-items:center; justify-content:center; padding:12px; text-align:center;
-              color:var(--navy); font-weight:600; font-size:15px; box-shadow:var(--shadow); }
-  .logo-slot img{ max-height:42px; width:auto; object-fit:contain; }
+  .logos{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .logo-slot{ min-height:118px; border:1px solid var(--line); border-radius:var(--radius-sm); background:#fff;
+              display:flex; align-items:center; justify-content:center; padding:22px 26px; text-align:center;
+              box-shadow:var(--shadow); }
+  .logo-slot img{ max-height:58px; max-width:100%; width:auto; object-fit:contain; }
+  .logo-name{ color:var(--navy); font-weight:600; font-size:17px; line-height:1.3; }
+  .logo-name small{ color:var(--muted-2); font-weight:500; font-size:12.5px; }
 
   /* ---------- WHAT YOU CAN BOOK ---------- */
   .book-col{ position:relative; }
@@ -314,15 +316,16 @@
 
   /* ---------- AD EXAMPLE PLACEHOLDERS ---------- */
   .example-group{ margin-top:38px; }
-  .eg-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .eg-head{ margin-bottom:16px; }
   .eg-head h3{ font-size:21px; }
-  .eg-meta{ color:var(--muted); font-size:14px; }
+  .eg-meta{ display:block; color:var(--muted); font-size:14px; margin-top:4px; }
+  .eg-hint{ display:block; color:var(--muted-2); font-size:13px; font-style:italic; margin-top:2px; }
   .example-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
   .shot{ margin:0; border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--line); box-shadow:var(--shadow); }
   .shot img{ width:100%; height:100%; object-fit:cover; display:block; }
   .shot iframe{ width:100%; height:100%; border:0; display:block; }
   .shot.portrait{ aspect-ratio:4 / 5; }
-  .shot.wide{ aspect-ratio:16 / 8; }
+  .shot.wide{ aspect-ratio:16 / 9; }
   .shot.yt-frame{ aspect-ratio:16 / 9; }
   .shot .shot-inner{ width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;
                      gap:6px; text-align:center; padding:18px; color:var(--muted-2);
@@ -333,6 +336,7 @@
   /* thumbnails with an image: crop from the top so the bottom is cut off */
   .shot.has-media{ position:relative; }
   .shot.has-media img{ object-position:top center; }
+  .shot.wide.has-media img{ object-position:bottom center; }   /* secondary ads: show the bottom (plug + link) */
   .shot .zoom-btn, .shot .play-btn{ position:absolute; inset:0; border:0; padding:0; margin:0; background:transparent;
                                     display:flex; align-items:center; justify-content:center; transition:background .2s ease; }
   .shot .zoom-btn{ cursor:zoom-in; }
@@ -544,24 +548,8 @@
     <div class="wrap">
       <span class="kicker reveal">Past &amp; Current Partners</span>
       <h2 id="part-h" class="h-lead reveal">In good company.</h2>
-      <!--
-        SWAP: each slot shows a neutral text chip as the fallback. To drop in a real logo,
-        uncomment that slot's <img> line and set its src (keep the alt text). One line per logo.
-      -->
-      <div class="logos stagger mt-md">
-        <div class="logo-slot"><!-- <img src="logos/appfolio.svg" alt="AppFolio"> --><span>AppFolio</span></div>
-        <div class="logo-slot"><!-- <img src="logos/second-nature.svg" alt="Second Nature"> --><span>Second Nature</span></div>
-        <div class="logo-slot"><!-- <img src="logos/leadsimple.svg" alt="LeadSimple"> --><span>LeadSimple</span></div>
-        <div class="logo-slot"><!-- <img src="logos/buildium.svg" alt="Buildium (A RealPage Company)"> --><span>Buildium<br><small style="color:var(--muted-2);font-weight:500;">A RealPage Company</small></span></div>
-        <div class="logo-slot"><!-- <img src="logos/property-meld.svg" alt="Property Meld"> --><span>Property Meld</span></div>
-        <div class="logo-slot"><!-- <img src="logos/rentengine.svg" alt="RentEngine"> --><span>RentEngine</span></div>
-        <div class="logo-slot"><!-- <img src="logos/apm-help.svg" alt="APM Help"> --><span>APM Help</span></div>
-        <div class="logo-slot"><!-- <img src="logos/enterprise-bank.svg" alt="Enterprise Bank & Trust"> --><span>Enterprise Bank &amp; Trust</span></div>
-        <div class="logo-slot"><!-- <img src="logos/utility-profit.svg" alt="Utility Profit"> --><span>Utility Profit</span></div>
-        <div class="logo-slot"><!-- <img src="logos/planomatic.svg" alt="PlanOmatic"> --><span>PlanOmatic</span></div>
-        <div class="logo-slot"><!-- <img src="logos/boom.svg" alt="boom"> --><span>boom</span></div>
-        <div class="logo-slot"><!-- <img src="logos/rentvine.svg" alt="Rentvine"> --><span>Rentvine</span></div>
-      </div>
+      <!-- Rendered from the LOGOS array in the script. Drop image files into /logos to replace the text fallbacks. -->
+      <div id="logoGrid" class="logos stagger mt-md"></div>
     </div>
   </section>
 
@@ -613,17 +601,29 @@
       <p class="sub reveal">A few real examples of each format. Sample slots are shown below; live examples drop in here.</p>
 
       <div class="example-group reveal">
-        <div class="eg-head"><h3>Primary Newsletter Ad</h3><span class="eg-meta">Up to 675 characters · Friday &amp; Tuesday issues</span></div>
+        <div class="eg-head">
+          <h3>Primary Newsletter Ad</h3>
+          <span class="eg-meta">Up to 675 characters · Friday &amp; Tuesday issues</span>
+          <span class="eg-hint">(click to enlarge)</span>
+        </div>
         <div id="examplesPrimary" class="example-grid"></div>
       </div>
 
       <div class="example-group reveal">
-        <div class="eg-head"><h3>Secondary Newsletter Ad</h3><span class="eg-meta">Up to 256 characters · Friday issue</span></div>
+        <div class="eg-head">
+          <h3>Secondary Newsletter Ad</h3>
+          <span class="eg-meta">Up to 256 characters + hyperlink · Friday issue, in the "PM Companies for Sale" section</span>
+          <span class="eg-hint">(click to enlarge)</span>
+        </div>
         <div id="examplesSecondary" class="example-grid"></div>
       </div>
 
       <div class="example-group reveal">
-        <div class="eg-head"><h3>Podcast Ad</h3><span class="eg-meta">90-second ad read · shown as a YouTube clip</span></div>
+        <div class="eg-head">
+          <h3>Podcast Ad</h3>
+          <span class="eg-meta">90-second ad read · shown as a YouTube clip</span>
+          <span class="eg-hint">(click to play)</span>
+        </div>
         <div id="examplesPodcast" class="example-grid"></div>
       </div>
     </div>
@@ -940,16 +940,36 @@ const MEDIA_EXAMPLES = {
     { img:"primary-ad-3.png", alt:"Primary newsletter ad example 3" },
   ],
   secondary: [
-    { img:"", alt:"Secondary newsletter ad example 1" },
-    { img:"", alt:"Secondary newsletter ad example 2" },
-    { img:"", alt:"Secondary newsletter ad example 3" },
+    { img:"secondary-ad-1.png", alt:"Secondary newsletter ad example 1" },
+    { img:"secondary-ad-2.png", alt:"Secondary newsletter ad example 2" },
+    { img:"secondary-ad-3.png", alt:"Secondary newsletter ad example 3" },
   ],
   podcast: [
-    { poster:"youtube-ad-1.png", youtube:"R9NdMo5Pltg", start:919, title:"Podcast ad example 1" },
-    { poster:"", youtube:"", start:0, title:"Podcast ad example 2" },
-    { poster:"", youtube:"", start:0, title:"Podcast ad example 3" },
+    { poster:"youtube-ad-1.jpg", youtube:"R9NdMo5Pltg", start:919,  title:"Podcast ad example 1" },
+    { poster:"youtube-ad-2.jpg", youtube:"R9NdMo5Pltg", start:2025, title:"Podcast ad example 2" },
+    { poster:"youtube-ad-3.jpg", youtube:"CtO__6oWkog", start:2233, title:"Podcast ad example 3" },
   ],
 };
+
+/* ==========================================================================
+   PARTNER LOGOS  —  drop image files into the /logos folder (see logos/README.txt).
+   Each slot shows the logo if its file exists, otherwise a plain text name.
+   To use SVG instead of PNG, just change the file extension here.
+   ========================================================================== */
+const LOGOS = [
+  { name:"AppFolio",              file:"logos/appfolio.png" },
+  { name:"Second Nature",         file:"logos/second-nature.png" },
+  { name:"LeadSimple",            file:"logos/leadsimple.png" },
+  { name:"Buildium", sub:"A RealPage Company", file:"logos/buildium.png" },
+  { name:"Property Meld",         file:"logos/property-meld.png" },
+  { name:"RentEngine",            file:"logos/rentengine.png" },
+  { name:"APM Help",              file:"logos/apm-help.png" },
+  { name:"Enterprise Bank & Trust", file:"logos/enterprise-bank.png" },
+  { name:"Utility Profit",        file:"logos/utility-profit.png" },
+  { name:"PlanOmatic",            file:"logos/planomatic.png" },
+  { name:"boom",                  file:"logos/boom.png" },
+  { name:"Rentvine",              file:"logos/rentvine.png" },
+];
 
 /* ==========================================================================
    RENDER HELPERS
@@ -1027,6 +1047,19 @@ function renderExamples(){
     if (e.poster)              return zoomThumb("yt-frame", e.poster, e.title);
     if (e.youtube)             return '<figure class="shot yt-frame"><iframe src="https://www.youtube.com/embed/'+e.youtube+(e.start?'?start='+e.start:'')+'" title="'+e.title+'" allowfullscreen loading="lazy"></iframe></figure>';
     return '<figure class="shot yt-frame">'+shotPlaceholder(true,"Video "+(i+1))+'</figure>';
+  }).join("");
+}
+
+// ----- Partner logos (§4.7): image with a text-name fallback if the file is missing -----
+function renderLogos(){
+  const wrap = document.getElementById("logoGrid");
+  wrap.innerHTML = LOGOS.map(function(l){
+    const sub = l.sub ? '<br><small>'+l.sub+'</small>' : "";
+    return '<div class="logo-slot">'
+         +   '<img src="'+l.file+'" alt="'+l.name+'" loading="lazy"'
+         +      ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';">'
+         +   '<span class="logo-name" style="display:none;">'+l.name+sub+'</span>'
+         + '</div>';
   }).join("");
 }
 
@@ -1306,6 +1339,7 @@ function boot(){
   runSelfCheck();          // dev console assertions (§5 targets)
   wireContacts();
   renderCharts();
+  renderLogos();
   renderExamples();
   renderAlaCarte();
   renderSeasons();
