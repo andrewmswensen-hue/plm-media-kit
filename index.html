@@ -1,0 +1,281 @@
+<!--
+  ============================================================================
+  PETER LOHMANN — SPONSORSHIP & MEDIA KIT  (single-file interactive page)
+  ============================================================================
+  HOW TO UPDATE THIS PAGE (no coding needed — only edit the CONFIG block below):
+   1. CHANGE A PRICE ....... find it in CONFIG.products / seasonPrograms / consulting, edit the number.
+   2. PODCAST IS BACK ...... set CONFIG.podcast.available = true (flip false→true). Everything un-grays
+                             and podcast slots rejoin the bundle math automatically.
+   3. CHANGE RETURN DATE ... edit CONFIG.podcast.returnDate ("YYYY-MM-DD").
+   4. ADD / REMOVE A DEAL .. edit the CONFIG.urgentDeals array (copy the sample line, fill it in).
+   5. SWAP A LOGO ......... find the partner in the logo grid markup, set its <img src> (search "SWAP:").
+   6. SWAP THE HEADSHOT .... search "SWAP:" near About Peter, set the <img src>.
+  Bundle prices & savings badges are COMPUTED from line items — never typed in by hand, so they can't drift.
+  ============================================================================
+-->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Peter Lohmann — Sponsorship &amp; Media Kit 2026</title>
+
+<!-- SCAFFOLD PREVIEW STYLES (temporary — will be replaced by the full design) -->
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         color: #1F3A4D; max-width: 720px; margin: 40px auto; padding: 0 20px; line-height: 1.5; }
+  h1 { color: #2C7CB0; }
+  .card { border: 1px solid #DCE7EF; border-radius: 12px; padding: 20px; margin: 16px 0; }
+  .price { font-size: 32px; font-weight: 700; color: #1F3A4D; }
+  .badge { display: inline-block; background: #DCE7EF; color: #1F3A4D; border-radius: 999px;
+           padding: 4px 12px; font-size: 14px; font-weight: 600; }
+  .badge.orange { background: #E0703C; color: #fff; }
+  .li { padding: 2px 0; }
+  .li.dropped { color: #9aa7b0; text-decoration: line-through; }
+  .note { color: #6b7a86; font-size: 14px; }
+  .checkline { font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+  .ok { color: #2e7d32; } .fail { color: #c62828; font-weight: 700; }
+</style>
+
+<main>
+  <h1>Pricing engine — scaffold preview</h1>
+  <p class="note">This temporary page shows the CONFIG-driven math working. The full designed media kit gets built on top of this same engine next.</p>
+
+  <h2>Podcast status</h2>
+  <div id="podcastStatus" class="card"></div>
+
+  <h2>Auto-computed bundles</h2>
+  <div id="bundles"></div>
+
+  <h2>Self-check (§5 validation targets)</h2>
+  <div id="selfcheck" class="card"></div>
+  <p class="note">Open the browser console (or run this file with Node) to see the same assertions logged.</p>
+</main>
+
+<script>
+/* ==========================================================================
+   CONFIG  —  the ONLY thing you edit to update prices, availability & deals.
+   ========================================================================== */
+const CONFIG = {
+  // ---- CONTACT ----
+  contactEmail: "aswensen@rlpmg.com",
+  contactName: "Andrew Swensen",
+  siteUrl: "peterlohmann.com",
+
+  // ---- GLOBAL PODCAST AVAILABILITY ----
+  // Flip `available` to true on/after returnDate to re-enable podcast EVERYWHERE
+  // (standalone products, season programs, and podcast line items inside bundles).
+  podcast: {
+    available: false,
+    returnDate: "2026-11-12",          // displayed as "November 12, 2026"
+  },
+
+  // ---- DISPLAY ----
+  bundleRounding: 5,                    // round computed bundle prices UP to nearest $ (5 = nearest $5)
+
+  // ---- A LA CARTE PRODUCTS (standard/rack pricing) ----
+  products: {
+    primaryNewsletter:   { label: "Primary Newsletter Ad",       price: 3500 },
+    secondaryNewsletter: { label: "Secondary Newsletter Ad",     price: 1250 },
+    podcastAd:           { label: "Podcast Ad Slot",             price: 1835, requiresPodcast: true },
+    podcastRead:         { label: "Podcast Ad Read by Peter",    price: 250,  requiresPodcast: true },
+    // LinkedIn is defined for future use but currently NOT sold and NOT in any bundle.
+    // Set active:true (and add it to a bundle's components) to bring it back.
+    linkedinPlug:        { label: "LinkedIn Plug",               price: 1000, active: false },
+    preferentialDates:   { label: "Preferential Date Selection", price: 0 },
+  },
+
+  // ---- BUNDLES (price + savings % are COMPUTED, never hardcoded) ----
+  bundles: [
+    {
+      id: "momentum", name: "Momentum Stack", accent: "blue",
+      discount: 0.24, minTermMonths: 3,
+      components: [
+        { product: "primaryNewsletter",   qty: 1 },
+        { product: "secondaryNewsletter", qty: 1 },
+        { product: "podcastAd",           qty: 1 },
+        { product: "podcastRead",         qty: 1 },
+      ],
+    },
+    {
+      id: "domination", name: "Market Domination", accent: "orange",
+      discount: 0.33, minTermMonths: 3,
+      components: [
+        { product: "primaryNewsletter",   qty: 2 },
+        { product: "secondaryNewsletter", qty: 2 },
+        { product: "podcastAd",           qty: 2 },
+        { product: "podcastRead",         qty: 2 },
+        { product: "preferentialDates",   qty: 1 },
+      ],
+    },
+  ],
+
+  // ---- SEASON PROGRAMS (podcast-gated) ----
+  seasonPrograms: [
+    { id: "presenting", name: "Presenting Partner",      price: 35000, valueNote: "$50,000+ value", requiresPodcast: true },
+    { id: "halfseason", name: "Half-Season Sponsorship", price: 16500, valueNote: "$22,000+ value", requiresPodcast: true },
+  ],
+
+  // ---- EXTRAS / STANDING DISCOUNTS ----
+  extras: {
+    mixMatchDiscount: 0.15,        // 15% off when mixing/matching 6+ à-la-carte ads
+    sixMonthDiscount: 0.10,        // 10% off monthly for a 6-month commitment
+    exclusivityAddon: 1000,        // per month
+    podcastGuestAppearance: 4000,  // waived with Market Domination
+  },
+
+  // ---- CONSULTING ----
+  consulting: {
+    adCopywriting: "FREE (available upon request)",
+    hourlyCoaching: 1100,
+    deepDive: 14000,
+  },
+
+  // ---- URGENT DEALS BOARD — edit this array anytime ----
+  // Each deal: { slot, date, original, deal, note?, expires? }  (dates "YYYY-MM-DD")
+  urgentDeals: [
+    // { slot: "Primary Newsletter Ad", date: "2026-07-18", original: 3500, deal: 2500, note: "Friday issue", expires: "2026-07-16" },
+  ],
+};
+
+/* ==========================================================================
+   COMPUTE ENGINE  —  pure functions. Nothing price-related lives in the HTML.
+   ========================================================================== */
+
+// Format a number as $X,XXX (no cents).
+function money(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+
+// Round a value UP to the nearest `step` dollars (5 → nearest $5).
+function roundUpTo(value, step) { return Math.ceil(value / step) * step; }
+
+// Is a product currently sellable? Active AND (not podcast-gated OR podcast is back).
+function productCounts(prod) {
+  if (!prod) return false;
+  if (prod.active === false) return false;
+  if (prod.requiresPodcast && !CONFIG.podcast.available) return false;
+  return true;
+}
+
+// Compute everything about a bundle from its components.
+// Returns { sum, price, savingsPct, lines:[{label, qty, counts, requiresPodcast}] }
+function computeBundle(bundle) {
+  let sum = 0;
+  const lines = bundle.components.map(function (c) {
+    const prod = CONFIG.products[c.product];
+    const counts = productCounts(prod);
+    if (counts) sum += prod.price * c.qty;
+    return {
+      label: prod.label, qty: c.qty, counts: counts,
+      requiresPodcast: !!prod.requiresPodcast, price: prod.price,
+    };
+  });
+  const price = roundUpTo(sum * (1 - bundle.discount), CONFIG.bundleRounding);
+  const savingsPct = Math.round(bundle.discount * 100);
+  return { sum: sum, price: price, savingsPct: savingsPct, lines: lines };
+}
+
+// Discount % for an urgent deal.
+function dealPct(d) { return Math.round((d.original - d.deal) / d.original * 100); }
+
+// Pretty date: "2026-11-12" → "November 12, 2026"  (parsed as local, no timezone drift).
+function prettyDate(iso) {
+  const p = iso.split("-");
+  const months = ["January","February","March","April","May","June","July",
+                  "August","September","October","November","December"];
+  return months[parseInt(p[1],10) - 1] + " " + parseInt(p[2],10) + ", " + p[0];
+}
+
+/* ==========================================================================
+   SELF-CHECK  —  asserts the §5 validation targets in BOTH podcast states.
+   Logs to console; also returns results so the page can display them.
+   ========================================================================== */
+function runSelfCheck() {
+  const results = [];
+  function check(label, got, want) {
+    const pass = got === want;
+    results.push({ label: label, got: got, want: want, pass: pass });
+    var line = (pass ? "✓ PASS" : "✗ FAIL") + "  " + label + "  got " + got + "  want " + want;
+    if (pass) console.log("%c" + line, "color:#2e7d32");
+    else      console.error(line);
+    return pass;
+  }
+  const savedAvailable = CONFIG.podcast.available;   // remember, so we can restore
+
+  // --- podcast SOLD OUT state ---
+  CONFIG.podcast.available = false;
+  const mOff = computeBundle(CONFIG.bundles[0]);
+  const dOff = computeBundle(CONFIG.bundles[1]);
+  check("Momentum (podcast off) price",        mOff.price,      3610);
+  check("Market Domination (podcast off) price", dOff.price,    6365);
+  check("Momentum savings %",                  mOff.savingsPct, 24);
+  check("Market Domination savings %",         dOff.savingsPct, 33);
+
+  // --- podcast AVAILABLE state ---
+  CONFIG.podcast.available = true;
+  const mOn = computeBundle(CONFIG.bundles[0]);
+  const dOn = computeBundle(CONFIG.bundles[1]);
+  check("Momentum (podcast on) price",         mOn.price,       5195);
+  check("Market Domination (podcast on) price", dOn.price,      9160);
+  check("Momentum savings % (on)",             mOn.savingsPct,  24);
+  check("Market Domination savings % (on)",    dOn.savingsPct,  33);
+
+  CONFIG.podcast.available = savedAvailable;          // restore real setting
+  const allPass = results.every(function (r) { return r.pass; });
+  console.log(allPass ? "%cALL SELF-CHECKS PASSED" : "%cSELF-CHECK FAILURES ABOVE",
+              "font-weight:bold;color:" + (allPass ? "#2e7d32" : "#c62828"));
+  return { results: results, allPass: allPass };
+}
+
+/* ==========================================================================
+   SCAFFOLD RENDER  —  minimal preview so you can eyeball the live numbers.
+   (This gets replaced by the full designed sections in the next step.)
+   ========================================================================== */
+function renderScaffold() {
+  // Podcast status line
+  var ps = CONFIG.podcast.available
+    ? "AVAILABLE — podcast products & season programs are live, podcast line items are in bundle math."
+    : "SOLD OUT until " + prettyDate(CONFIG.podcast.returnDate) +
+      " — podcast products grayed, season programs stamped SOLD OUT, podcast line items drop out of bundle math.";
+  document.getElementById("podcastStatus").innerHTML =
+    "<strong>CONFIG.podcast.available = " + CONFIG.podcast.available + "</strong><br>" + ps;
+
+  // Bundles
+  var html = "";
+  CONFIG.bundles.forEach(function (b) {
+    var r = computeBundle(b);
+    var accent = b.accent === "orange" ? " orange" : "";
+    var lines = r.lines.map(function (l) {
+      var dropped = !l.counts ? " dropped" : "";
+      var ret = (!l.counts && l.requiresPodcast)
+        ? ' <span class="note">(returns ' + prettyDate(CONFIG.podcast.returnDate) + ')</span>' : "";
+      return '<div class="li' + dropped + '">' + l.qty + "× " + l.label + ret + "</div>";
+    }).join("");
+    html +=
+      '<div class="card">' +
+        "<h3>" + b.name + '</h3>' +
+        lines +
+        '<p class="price">' + money(r.price) + '<span class="note"> /mo</span></p>' +
+        '<span class="badge' + accent + '">' + r.savingsPct + '% savings</span> ' +
+        '<span class="note">' + b.minTermMonths + '-month minimum · à-la-carte value ' + money(r.sum) + '</span>' +
+      "</div>";
+  });
+  document.getElementById("bundles").innerHTML = html;
+
+  // Self-check panel
+  var sc = runSelfCheck();
+  var scHtml = sc.results.map(function (r) {
+    return '<div class="checkline ' + (r.pass ? "ok" : "fail") + '">' +
+           (r.pass ? "✓ PASS" : "✗ FAIL") + " — " + r.label +
+           " → got " + r.got + ", want " + r.want + "</div>";
+  }).join("");
+  scHtml += '<div class="checkline" style="margin-top:8px;font-weight:700;">' +
+            (sc.allPass ? '<span class="ok">ALL 8 CHECKS PASSED</span>'
+                        : '<span class="fail">SOME CHECKS FAILED</span>') + "</div>";
+  document.getElementById("selfcheck").innerHTML = scHtml;
+}
+
+// Run in browser; also runnable under Node for a headless math check.
+if (typeof document !== "undefined") {
+  renderScaffold();
+} else {
+  runSelfCheck();
+  module.exports = { CONFIG: CONFIG, computeBundle: computeBundle, roundUpTo: roundUpTo };
+}
+</script>
