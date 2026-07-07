@@ -233,9 +233,11 @@
   /* ---------- SEASON PROGRAMS ---------- */
   .season-card{ position:relative; overflow:hidden; }
   .value-note{ color:var(--primary-dark); font-weight:600; font-size:14px; }
-  .ribbon{ position:absolute; top:16px; right:-42px; transform:rotate(45deg);
-           background:var(--navy); color:#fff; font-weight:700; font-size:12.5px; letter-spacing:.12em;
-           padding:6px 52px; box-shadow:var(--shadow); }
+  .ribbon{ position:absolute; top:22px; right:-52px; width:184px; text-align:center; transform:rotate(45deg);
+           background:var(--navy); color:#fff; font-weight:700; font-size:12px; letter-spacing:.14em;
+           padding:7px 0; box-shadow:var(--shadow); }
+  /* featured season program: bigger, blue title so it reads as the stronger option */
+  .season-card.featured h3{ font-size:25px; color:var(--primary); }
   ul.feat{ list-style:none; margin:16px 0 0; padding:0; }
   ul.feat li{ position:relative; padding-left:26px; margin-bottom:9px; color:var(--navy); font-size:15px; }
   ul.feat li::before{ content:"✓"; position:absolute; left:0; top:0; color:var(--primary); font-weight:700; }
@@ -444,6 +446,7 @@
       <a href="#about">About</a>
       <a href="#audience">Audience</a>
       <a href="#book">What to Book</a>
+      <a href="#examples">Ad Examples</a>
       <a href="#pricing">Pricing</a>
       <a href="#bundles">Bundles</a>
       <a href="#deals">Deals</a>
@@ -502,7 +505,7 @@
   <section class="band wash" aria-labelledby="why-h">
     <div class="wrap">
       <span class="kicker reveal">Why Partner With Peter</span>
-      <h2 id="why-h" class="h-lead reveal">Reach the people who decide.</h2>
+      <h2 id="why-h" class="h-lead reveal">Reach property management decision makers.</h2>
       <div class="grid g4 stagger mt-md">
         <div class="card"><div class="num-badge">1</div><h3>Hyper-Targeted</h3><p>Property management decision makers are our core audience, not a broad, diluted list.</p></div>
         <div class="card"><div class="num-badge">2</div><h3>Built-In Trust</h3><p>Peter's reputation means your message gets real attention, not a reflexive scroll-past.</p></div>
@@ -1170,7 +1173,7 @@ function renderAlaCarte(){
         +   '<div class="addon">'
         +     '<div class="addon-tag">Add-on</div>'
         +     '<div class="addon-row"><span class="addon-name">'+P.podcastRead.label+'</span><span class="addon-price">'+money(P.podcastRead.price)+'</span></div>'
-        +     '<p class="addon-desc">Have Peter read your ad live for extra credibility.</p>'
+        +     '<p class="addon-desc">Have Peter read your ad for extra credibility.</p>'
         +   '</div>'
         + '</div>';
   document.getElementById("alacarte").innerHTML = html;
@@ -1190,7 +1193,8 @@ function renderSeasons(){
     const feats = '<ul class="feat">' + s.features.map(function(f){ return "<li>"+f+"</li>"; }).join("") + '</ul>';
     const avail = (gated && s.id==="halfseason")
       ? '<p class="tag tag-warn" style="margin-top:14px;">Available starting '+returnDateStr()+'</p>' : "";
-    return '<div class="card season-card'+soldClass+'">'
+    const feat = s.id === "presenting" ? " featured" : "";
+    return '<div class="card season-card'+soldClass+feat+'">'
          +   ribbon
          +   '<h3>'+s.name+'</h3>'
          +   '<p style="color:var(--muted);font-size:15px;margin:2px 0 8px;">'+s.blurb+'</p>'
