@@ -90,6 +90,9 @@
   nav.top .bar{ display:flex; align-items:center; gap:20px; height:58px; max-width:var(--maxw); margin:0 auto; padding:0 24px; }
   nav.top .brand{ font-weight:700; color:var(--navy); letter-spacing:-.01em; font-size:17px; white-space:nowrap; }
   nav.top .brand span{ color:var(--primary); }
+  nav.top .back-link{ font-size:13px; color:var(--muted); font-weight:600; white-space:nowrap; }
+  nav.top .back-link:hover{ color:var(--primary); text-decoration:none; }
+  nav.top .back-link span{ font-size:15px; }
   nav.top .links{ display:flex; gap:22px; margin-left:8px; flex:1; }
   nav.top .links a{ color:var(--navy); font-size:15px; font-weight:500; }
   nav.top .links a:hover{ color:var(--primary); text-decoration:none; }
@@ -373,6 +376,26 @@
   .lb-content .lb-video{ width:min(92vw, 158vh); aspect-ratio:16 / 9; max-height:90vh; }
   .lb-content .lb-video iframe{ width:100%; height:100%; border:0; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.5); }
 
+  /* contact modal */
+  .cmodal{ position:fixed; inset:0; z-index:1000; display:none; align-items:center; justify-content:center; padding:24px;
+           background:rgba(12,20,27,.86); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+  .cmodal.open{ display:flex; }
+  .cmodal-card{ position:relative; background:#fff; border-radius:22px; padding:44px 40px 38px; max-width:480px; width:100%;
+                text-align:center; box-shadow:0 30px 80px rgba(0,0,0,.4); }
+  .cmodal-close{ position:absolute; top:14px; right:16px; width:38px; height:38px; border:0; border-radius:50%; cursor:pointer;
+                 background:#f0f3f6; color:var(--navy); font-size:24px; line-height:1; display:flex; align-items:center; justify-content:center; }
+  .cmodal-close:hover{ background:#e2e8ee; }
+  .cmodal-eyebrow{ color:var(--primary-dark); font-weight:700; letter-spacing:.1em; text-transform:uppercase; font-size:12.5px; margin-bottom:8px; }
+  .cmodal-card h3{ font-size:26px; margin-bottom:8px; }
+  .cmodal-card p{ color:var(--muted); font-size:15.5px; margin:0 auto 22px; max-width:36ch; }
+  .cmodal-email{ font-size:clamp(22px,4vw,30px); font-weight:700; color:var(--navy); letter-spacing:-.01em;
+                 background:var(--wash-soft); border:1px solid var(--wash); border-radius:14px; padding:16px 18px; margin-bottom:18px;
+                 word-break:break-all; user-select:all; }
+  .cmodal-copy{ width:100%; justify-content:center; }
+  .cmodal-copy.copied{ background:#2e7d32; box-shadow:none; }
+  .cmodal-mail{ display:inline-block; margin-top:14px; color:var(--muted); font-size:14px; }
+  .cmodal-mail:hover{ color:var(--primary); }
+
   @media (max-width:820px){ .example-grid{ grid-template-columns:1fr 1fr; } }
   @media (max-width:560px){ .example-grid{ grid-template-columns:1fr; } }
 
@@ -387,6 +410,7 @@
   @media (max-width:720px){
     body{ font-size:16px; }
     nav.top .links{ display:none; }
+    nav.top .brand{ display:none; }   /* keep back-link + Book button; name is prominent in the hero */
     .band{ padding:60px 0; }
     .g2,.g3,.g4{ grid-template-columns:1fr; }
     .stats{ grid-template-columns:1fr 1fr; }
@@ -412,6 +436,7 @@
 <!-- ============================== NAV ============================== -->
 <nav class="top" aria-label="Primary">
   <div class="bar">
+    <a class="back-link" id="backLink" href="https://peterlohmann.com" target="_blank" rel="noopener"><span aria-hidden="true">&larr;</span> peterlohmann.com</a>
     <div class="brand">Peter <span>Lohmann</span></div>
     <div class="links">
       <a href="#about">About</a>
@@ -523,10 +548,10 @@
       </div>
       <div class="stats stagger">
         <div class="stat"><div class="v countup" data-target="20000" data-suffix="+">0</div><div class="k">newsletter subscribers</div></div>
-        <div class="stat"><div class="v countup" data-target="7.41" data-decimals="2" data-suffix="%">0</div><div class="k">avg. newsletter click-thru rate</div></div>
+        <div class="stat"><div class="v countup" data-target="5.22" data-decimals="2" data-suffix="%">0</div><div class="k">avg. newsletter click-thru rate</div></div>
         <div class="stat"><div class="v countup" data-target="1300">0</div><div class="k">average new subscribers / month</div></div>
-        <div class="stat"><div class="v countup" data-target="800" data-suffix="+">0</div><div class="k">podcast listeners per episode</div></div>
-        <div class="stat"><div class="v">60-70%</div><div class="k">newsletter open rates</div></div>
+        <div class="stat"><div class="v countup" data-target="1000" data-suffix="+">0</div><div class="k">podcast listeners per episode</div></div>
+        <div class="stat"><div class="v">50-70%</div><div class="k">newsletter open rates</div></div>
         <div class="stat"><div class="v countup" data-target="200000" data-suffix="+">0</div><div class="k">LinkedIn impressions / month</div></div>
       </div>
     </div>
@@ -593,7 +618,7 @@
           <h3>Bundles &amp; Extras</h3>
           <p>Combine channels for more exposure and better economics.</p>
           <ul>
-            <li>Bundle newsletter + podcast + social</li>
+            <li>Bundle newsletter + podcast</li>
             <li>Unlock discounts by booking multiple months</li>
             <li>Lock out competitors for your term</li>
             <li>Request premiere date spots before industry events</li>
@@ -719,6 +744,19 @@
 <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Preview">
   <button class="lb-close" type="button" aria-label="Close preview">&times;</button>
   <div class="lb-content"></div>
+</div>
+
+<!-- Contact modal — opened by every Book/Contact CTA (no forced mail app). -->
+<div id="contactModal" class="cmodal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cmodalTitle">
+  <div class="cmodal-card">
+    <button class="cmodal-close" type="button" aria-label="Close">&times;</button>
+    <div class="cmodal-eyebrow">Let's talk</div>
+    <h3 id="cmodalTitle">Book a partnership</h3>
+    <p>Email Andrew Swensen with questions, availability, or to reserve your spot.</p>
+    <div class="cmodal-email" id="cmodalEmail">aswensen@rlpmg.com</div>
+    <button class="btn btn-primary cmodal-copy" id="cmodalCopy" type="button">Copy email address</button>
+    <a class="cmodal-mail" id="cmodalMailto" href="#">or open in your mail app</a>
+  </div>
 </div>
 
 <script>
@@ -980,6 +1018,12 @@ const LOGOS = [
   { name:"PlanOmatic",            file:"logos/planomatic.png" },
   { name:"boom",                  file:"logos/boom.png" },
   { name:"Rentvine",              file:"logos/rentvine.png" },
+  { name:"PMU",                   file:"logos/pmu.png" },
+  { name:"Haven AI",              file:"logos/haven-ai.png" },
+  { name:"DoorLoop",              file:"logos/doorloop.png" },
+  { name:"Tenant Turner",         file:"logos/tenant-turner.png" },
+  { name:"ShowMojo",              file:"logos/showmojo.png" },
+  { name:"Column Bank",           file:"logos/column-bank.png" },
 ];
 
 /* ==========================================================================
@@ -1236,14 +1280,70 @@ function renderBookTag(){
 
 // ----- Wire up all contact links from CONFIG -----
 function wireContacts(){
-  const mailto = "mailto:" + CONFIG.contactEmail + "?subject=" + encodeURIComponent("Peter Lohmann sponsorship inquiry");
-  ["navBook","heroBook","ctaButton"].forEach(function(id){ document.getElementById(id).href = mailto; });
-  ["heroEmail","ctaEmail","footEmail"].forEach(function(id){ document.getElementById(id).href = "mailto:"+CONFIG.contactEmail; });
-  document.getElementById("heroEmail").textContent = CONFIG.contactEmail;
-  document.getElementById("footEmail").textContent = CONFIG.contactEmail;
+  const email = CONFIG.contactEmail;
+  const mailto = "mailto:" + email + "?subject=" + encodeURIComponent("Peter Lohmann sponsorship inquiry");
+  // Buttons + email links keep a real mailto as a no-JS fallback, but JS intercepts them
+  // to open the copy-friendly contact modal (no forced mail app).
+  ["navBook","heroBook","ctaButton"].forEach(function(id){ const el=document.getElementById(id); el.href=mailto; el.classList.add("js-contact"); });
+  ["heroEmail","ctaEmail","footEmail"].forEach(function(id){ const el=document.getElementById(id); el.href="mailto:"+email; el.classList.add("js-contact"); });
+  document.getElementById("heroEmail").textContent = email;
+  document.getElementById("footEmail").textContent = email;
   const site = "https://" + CONFIG.siteUrl.replace(/^https?:\/\//,"");
   ["heroSite","footSite"].forEach(function(id){
     const a = document.getElementById(id); a.href = site; a.textContent = CONFIG.siteUrl;
+  });
+}
+
+/* ==========================================================================
+   CONTACT MODAL  —  every Book/Contact CTA opens this (email big + copy button).
+   ========================================================================== */
+function setupContactModal(){
+  const modal = document.getElementById("contactModal");
+  if (!modal) return;
+  const closeBtn = modal.querySelector(".cmodal-close");
+  const emailEl = document.getElementById("cmodalEmail");
+  const copyBtn = document.getElementById("cmodalCopy");
+  const mailtoLink = document.getElementById("cmodalMailto");
+  const email = CONFIG.contactEmail;
+  let lastFocus = null;
+
+  emailEl.textContent = email;
+  mailtoLink.href = "mailto:" + email + "?subject=" + encodeURIComponent("Peter Lohmann sponsorship inquiry");
+
+  function open(){
+    lastFocus = document.activeElement;
+    copyBtn.classList.remove("copied"); copyBtn.textContent = "Copy email address";
+    modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+    closeBtn.focus();
+  }
+  function close(){
+    modal.classList.remove("open"); modal.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  closeBtn.addEventListener("click", close);
+  modal.addEventListener("click", function(e){ if (e.target === modal) close(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && modal.classList.contains("open")) close(); });
+
+  // Intercept every Book/Contact trigger (buttons + email links) to open the modal.
+  document.addEventListener("click", function(e){
+    const t = e.target.closest && e.target.closest(".js-contact");
+    if (t){ e.preventDefault(); open(); }
+  });
+
+  copyBtn.addEventListener("click", function(){
+    function done(){ copyBtn.classList.add("copied"); copyBtn.textContent = "Copied!"; }
+    function selectText(){
+      const r = document.createRange(); r.selectNodeContents(emailEl);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(email).then(done).catch(function(){ selectText(); try{ document.execCommand("copy"); done(); }catch(err){} });
+    } else {
+      selectText(); try{ document.execCommand("copy"); done(); }catch(err){}
+    }
   });
 }
 
@@ -1368,6 +1468,7 @@ function boot(){
   setupReveals();
   setupCountUps();
   setupLightbox();
+  setupContactModal();
   postHeight();
   window.addEventListener("resize", postHeight);
   window.addEventListener("load", postHeight);
