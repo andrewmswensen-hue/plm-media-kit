@@ -310,9 +310,10 @@
   .mt-sm{ margin-top:10px; } .mt-md{ margin-top:24px; } .mt-lg{ margin-top:40px; }
 
   /* ---------- REVEAL ANIMATION ---------- */
-  .reveal{ opacity:0; transform:translateY(26px); transition:opacity .6s ease, transform .6s ease; }
+  /* Pre-scroll: dimmed but visible (so nothing reads as blank); brightens + rises on reveal. */
+  .reveal{ opacity:.35; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
   .reveal.in{ opacity:1; transform:none; }
-  .stagger > *{ opacity:0; transform:translateY(22px); transition:opacity .55s ease, transform .55s ease; }
+  .stagger > *{ opacity:.35; transform:translateY(16px); transition:opacity .55s ease, transform .55s ease; }
   .stagger.in > *{ opacity:1; transform:none; }
   .stagger.in > *:nth-child(2){ transition-delay:.07s; }
   .stagger.in > *:nth-child(3){ transition-delay:.14s; }
