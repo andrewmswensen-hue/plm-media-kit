@@ -132,23 +132,33 @@
        }
   .hero .wrap{ padding-top:96px; padding-bottom:104px; }
   .hero .eyebrow{ color:var(--primary); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:clamp(19px,2.4vw,24px); margin-bottom:16px; }
-  .hero h1{ font-size:clamp(48px,9vw,104px); line-height:.98; margin-bottom:20px; }
+  .hero h1{ font-size:clamp(44px,6.6vw,92px); line-height:1; margin-bottom:20px; }
   .hero .subtitle{ font-size:clamp(19px,2.4vw,24px); color:var(--navy); font-weight:600; margin-bottom:14px; }
   .hero .tagline{ font-size:clamp(17px,2vw,20px); color:var(--muted); max-width:40ch; margin-bottom:34px; }
   .hero .cta-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:34px; }
   .hero .foot{ color:var(--muted-2); font-size:15px; }
   .hero .foot a{ color:var(--primary); }
+  /* two-column hero: photo above text on mobile, beside it on wider screens */
+  .hero-grid{ display:flex; flex-direction:column-reverse; gap:30px; align-items:flex-start; }
+  .hero-photo{ align-self:center; }
+  .hero-photo .headshot{ width:232px; height:232px; }
+  .hero-photo .headshot .mono{ font-size:76px; }
+  @media (min-width:900px){
+    .hero-grid{ display:grid; grid-template-columns:1fr auto; gap:56px; align-items:center; }
+    .hero-photo .headshot{ width:344px; height:344px; }
+    .hero-photo .headshot .mono{ font-size:112px; }
+  }
 
-  /* ---------- ABOUT ---------- */
-  .about-grid{ display:grid; grid-template-columns:300px 1fr; gap:60px; align-items:start; }
-  .about-photo{ display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .headshot{ width:288px; height:288px; border-radius:50%; overflow:hidden; flex:none;
+  /* ---------- HEADSHOT (now in the hero) ---------- */
+  .headshot{ border-radius:50%; overflow:hidden; flex:none;
              background:linear-gradient(160deg,var(--primary),var(--navy)); position:relative;
              display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-lg); }
-  .headshot .mono{ color:#fff; font-size:90px; font-weight:700; letter-spacing:.02em; opacity:.92; }
+  .headshot .mono{ color:#fff; font-weight:700; letter-spacing:.02em; opacity:.92; }
   /* scale a touch and nudge right so Peter sits centered in the circle */
   .headshot img{ width:100%; height:100%; object-fit:cover; transform:scale(1.06) translateX(3%); }
-  .about-body{ max-width:620px; }
+
+  /* ---------- ABOUT (text-forward) ---------- */
+  .about-body{ max-width:760px; }
   .about-body p{ font-size:17.5px; color:var(--navy); }
   .about-body p.lead{ font-size:22px; font-weight:600; color:var(--navy); }
 
@@ -459,44 +469,43 @@
 
   <!-- ============================== HERO (§4.1) ============================== -->
   <header class="hero" aria-labelledby="hero-title">
-    <div class="wrap">
-      <p class="eyebrow reveal">Partner With</p>
-      <h1 id="hero-title" class="reveal">Peter Lohmann</h1>
-      <p class="subtitle reveal">Sponsorship &amp; Media Opportunities · 2026</p>
-      <p class="tagline reveal">Targeted exposure to over 20,000 property management professionals, every week.</p>
-      <div class="cta-row reveal">
-        <a class="btn btn-primary" id="heroBook" href="#">Book a Partnership</a>
-        <a class="btn btn-ghost" href="#pricing">See Pricing</a>
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <p class="eyebrow reveal">Partner With</p>
+        <h1 id="hero-title" class="reveal">Peter Lohmann</h1>
+        <p class="subtitle reveal">Sponsorship &amp; Media Opportunities · 2026</p>
+        <p class="tagline reveal">Targeted exposure to over 20,000 property management professionals, every week.</p>
+        <div class="cta-row reveal">
+          <a class="btn btn-primary" id="heroBook" href="#">Book a Partnership</a>
+          <a class="btn btn-ghost" href="#pricing">See Pricing</a>
+        </div>
+        <p class="foot reveal">
+          <a id="heroSite" href="#" target="_blank" rel="noopener">peterlohmann.com</a>
+          &nbsp;•&nbsp;
+          <a id="heroEmail" href="#">aswensen@rlpmg.com</a>
+        </p>
       </div>
-      <p class="foot reveal">
-        <a id="heroSite" href="#" target="_blank" rel="noopener">peterlohmann.com</a>
-        &nbsp;•&nbsp;
-        <a id="heroEmail" href="#">aswensen@rlpmg.com</a>
-      </p>
+      <!-- SWAP: drop "peter-headshot.jpg" into this folder; the "PL" monogram shows until then. -->
+      <div class="hero-photo reveal">
+        <div class="headshot hero-headshot" role="img" aria-label="Peter Lohmann">
+          <img id="peterPhoto" src="peter-headshot.jpg" alt="Peter Lohmann"
+               onerror="this.style.display='none';var m=document.getElementById('peterMono');if(m)m.style.display='flex';" />
+          <span id="peterMono" class="mono" aria-hidden="true" style="display:none;">PL</span>
+        </div>
+      </div>
     </div>
   </header>
 
   <!-- ============================== ABOUT (§4.2) ============================== -->
   <section id="about" class="band" aria-labelledby="about-h">
     <div class="wrap">
-      <div class="about-grid mt-sm">
-        <!-- SWAP: drop a file named "peter-headshot.jpg" into this project folder and it appears automatically.
-             Until that file exists, the "PL" monogram shows as a fallback. Keep the circular crop. -->
-        <div class="about-photo reveal">
-          <span class="kicker">About Peter</span>
-          <div class="headshot" role="img" aria-label="Peter Lohmann">
-            <img id="peterPhoto" src="peter-headshot.jpg" alt="Peter Lohmann"
-                 onerror="this.style.display='none';var m=document.getElementById('peterMono');if(m)m.style.display='flex';" />
-            <span id="peterMono" class="mono" aria-hidden="true" style="display:none;">PL</span>
-          </div>
-        </div>
-        <div class="about-body reveal">
-          <h2 id="about-h" class="sr-only" style="position:absolute;left:-9999px;">About Peter Lohmann</h2>
-          <p class="lead">Peter Lohmann is one of the most trusted and influential voices in property management today.</p>
-          <p>His newsletter and podcast reach over 20,000 property management company owners, vendors, and real estate investors every week.</p>
-          <p>He speaks at leading industry events including NARPM National &amp; Broker/Owner and LeadSimple University, and has been featured on top podcasts including Profitable Property Management and Top Floor.</p>
-          <p>As CEO of a 700+ unit property management company and co-founder of CRANE, an exclusive online community for PM operators, Peter combines real-world operator experience with polished, data-driven industry insights.</p>
-        </div>
+      <span class="kicker reveal">About Peter</span>
+      <div class="about-body reveal mt-sm">
+        <h2 id="about-h" class="sr-only" style="position:absolute;left:-9999px;">About Peter Lohmann</h2>
+        <p class="lead">Peter Lohmann is one of the most trusted and influential voices in property management today.</p>
+        <p>His newsletter and podcast reach over 20,000 property management company owners, vendors, and real estate investors every week.</p>
+        <p>He speaks at leading industry events including NARPM National &amp; Broker/Owner and LeadSimple University, and has been featured on top podcasts including Profitable Property Management and Top Floor.</p>
+        <p>As CEO of a 700+ unit property management company and co-founder of CRANE, an exclusive online community for PM operators, Peter combines real-world operator experience with polished, data-driven industry insights.</p>
       </div>
     </div>
   </section>
