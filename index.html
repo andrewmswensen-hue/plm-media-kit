@@ -342,6 +342,7 @@
 
   /* ---------- DISCOUNTS & EXTRAS: three cards ---------- */
   .extra-card .extra-v{ font-size:33px; font-weight:700; color:var(--navy); letter-spacing:-.02em; }
+  .extra-card .extra-pre{ display:block; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:2px; }
   .extra-card .extra-v small{ font-size:15px; color:var(--muted); font-weight:600; letter-spacing:0; }
   .extra-card h4{ font-size:17px; margin:10px 0 6px; }
   .extra-card p{ color:var(--muted); font-size:14.5px; margin:0; }
@@ -513,7 +514,7 @@
         <p class="lead">Peter Lohmann is one of the most trusted and influential voices in property management today.</p>
         <p>His newsletter and podcast reach over 20,000 property management company owners, vendors, and real estate investors every week.</p>
         <p>He speaks at leading industry events including NARPM National &amp; Broker/Owner and LeadSimple University, and has been featured on top podcasts including Profitable Property Management and Top Floor.</p>
-        <p>As CEO of a 700+ unit property management company and co-founder of CRANE, an exclusive online community for PM operators, Peter combines real-world operator experience with polished, data-driven industry insights.</p>
+        <p>As CEO of a 700+ unit property management company and co-founder of Crane, an exclusive online community for PM operators, Peter combines real-world operator experience with polished, data-driven industry insights.</p>
       </div>
     </div>
   </section>
@@ -1253,8 +1254,8 @@ function renderExtras(){
   document.getElementById("extras").innerHTML =
       '<div class="card extra-card"><div class="extra-v">'+pct+'% off</div>'
     +   '<h4>6-Month Commitment</h4><p>Lock in a 6-month term and take '+pct+'% off your monthly bundle price.</p></div>'
-    + '<div class="card extra-card"><div class="extra-v">'+money(x.exclusivityAddon)+'<small> /mo</small></div>'
-    +   '<h4>Exclusivity Add-on</h4><p>Prevent competitors from advertising during your term, so your brand owns the category.</p></div>'
+    + '<div class="card extra-card"><div class="extra-v"><span class="extra-pre">Starting at</span>'+money(x.exclusivityAddon)+'<small> /mo</small></div>'
+    +   '<h4>Exclusivity Add-on</h4><p>Prevent competitors from advertising during your term, so your brand owns the category. The exact rate depends on your category.</p></div>'
     + '<div class="card extra-card"><div class="extra-v">'+money(x.podcastGuestAppearance)+'</div>'
     +   '<h4>Peter on Your Podcast</h4><p>Bring Peter on your podcast. This fee is waived with the Market Domination bundle.</p></div>'
     + '<div class="card extra-card"><div class="extra-v">'+money(x.guestOnPetersPodcast)+'</div>'
