@@ -330,6 +330,8 @@
   .example-group{ margin-top:38px; }
   .eg-head{ margin-bottom:16px; }
   .eg-head h3{ font-size:21px; }
+  .eg-price{ color:var(--primary-dark); font-weight:700; }
+  .eg-soldout{ color:var(--orange-dark); font-weight:600; font-size:0.8em; }
   .eg-meta{ display:block; color:var(--muted); font-size:14px; margin-top:4px; }
   .eg-hint{ display:block; color:var(--muted-2); font-size:13px; font-style:italic; margin-top:2px; }
   .example-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
@@ -638,7 +640,7 @@
 
       <div class="example-group reveal">
         <div class="eg-head">
-          <h3>Primary Newsletter Ad</h3>
+          <h3>Primary Newsletter Ad<span class="eg-price" id="egPricePrimary"></span></h3>
           <span class="eg-meta">Up to 675 characters · Friday &amp; Tuesday issues</span>
           <span class="eg-hint">(click to enlarge)</span>
         </div>
@@ -647,7 +649,7 @@
 
       <div class="example-group reveal">
         <div class="eg-head">
-          <h3>Secondary Newsletter Ad</h3>
+          <h3>Secondary Newsletter Ad<span class="eg-price" id="egPriceSecondary"></span></h3>
           <span class="eg-meta">Up to 256 characters + hyperlink · Friday issue, in the "PM Companies for Sale" section</span>
           <span class="eg-hint">(click to enlarge)</span>
         </div>
@@ -656,7 +658,7 @@
 
       <div class="example-group reveal">
         <div class="eg-head">
-          <h3>Podcast Ad</h3>
+          <h3>Podcast Ad<span class="eg-price" id="egPricePodcast"></span></h3>
           <span class="eg-meta">90-second ad read · shown as a YouTube clip</span>
           <span class="eg-hint">(click to play)</span>
         </div>
@@ -1097,6 +1099,14 @@ function videoThumb(poster, alt, yt, start){
 }
 
 function renderExamples(){
+  // Header prices, pulled from CONFIG so they never drift. Podcast shows a sold-out note while unavailable.
+  const P = CONFIG.products;
+  document.getElementById("egPricePrimary").textContent   = " - " + money(P.primaryNewsletter.price) + " ea.";
+  document.getElementById("egPriceSecondary").textContent = " - " + money(P.secondaryNewsletter.price) + " ea.";
+  const podSold = P.podcastAd.requiresPodcast && !CONFIG.podcast.available;
+  document.getElementById("egPricePodcast").innerHTML = " - " + money(P.podcastAd.price) + " ea."
+    + (podSold ? ' <span class="eg-soldout">(Sold out until ' + returnDateStr() + ')</span>' : "");
+
   document.getElementById("examplesPrimary").innerHTML = MEDIA_EXAMPLES.primary.map(function(e,i){
     return e.img ? zoomThumb("portrait", e.img, e.alt) : '<figure class="shot portrait">'+shotPlaceholder(false,"Example "+(i+1))+'</figure>';
   }).join("");
