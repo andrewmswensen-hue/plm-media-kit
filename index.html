@@ -351,6 +351,35 @@
   .extra-card .extra-v small{ font-size:15px; color:var(--muted); font-weight:600; letter-spacing:0; }
   .extra-card h4{ font-size:17px; margin:10px 0 6px; }
   .extra-card p{ color:var(--muted); font-size:14.5px; margin:0; }
+  .guest-more{ color:var(--primary-dark); font-weight:600; }
+
+  /* ---------- PODCAST GUEST: + toggle + expandable panel ---------- */
+  .extra-card.guest-extra{ position:relative; }
+  .guest-toggle{ position:absolute; top:14px; right:14px; width:32px; height:32px; border-radius:50%;
+                 border:1px solid var(--line); background:#fff; color:var(--primary-dark); font-size:22px; line-height:1;
+                 font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center;
+                 transition:transform .3s ease, background .2s ease, color .2s ease; }
+  .guest-toggle:hover{ background:var(--wash); }
+  .guest-toggle[aria-expanded="true"]{ background:var(--navy); color:#fff; border-color:var(--navy); }
+
+  .guest-panel{ display:grid; grid-template-rows:0fr; opacity:0; margin-top:0;
+                transition:grid-template-rows .45s ease, opacity .4s ease, margin-top .45s ease; }
+  .guest-panel.open{ grid-template-rows:1fr; opacity:1; margin-top:22px; }
+  .guest-panel-inner{ overflow:hidden; min-height:0; visibility:hidden; transition:visibility 0s linear .45s; }
+  .guest-panel.open .guest-panel-inner{ visibility:visible; transition-delay:0s; }
+  .guest-card{ background:#fff; border:1px solid var(--line); border-top:4px solid var(--orange);
+               border-radius:var(--radius); padding:34px 32px; box-shadow:var(--shadow-lg); }
+  .guest-kicker{ color:var(--orange-dark); font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:12px; margin-bottom:8px; }
+  .guest-title{ font-size:26px; margin-bottom:8px; }
+  .guest-rate{ font-size:18px; color:var(--muted); margin:0 0 24px; max-width:64ch; }
+  .guest-rate strong{ color:var(--navy); }
+  .guest-cols{ display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-bottom:26px; }
+  .guest-cols h4{ font-size:16px; margin-bottom:12px; }
+  @media (max-width:720px){ .guest-cols{ grid-template-columns:1fr; gap:22px; } }
+  @media (prefers-reduced-motion: reduce){
+    .guest-panel{ transition:opacity .01s; }
+    .guest-toggle{ transition:none; }
+  }
 
   /* ---------- AD EXAMPLE PLACEHOLDERS ---------- */
   .example-group{ margin-top:58px; }
@@ -722,6 +751,8 @@
       <div class="mt-lg">
         <h3 class="reveal" style="font-size:20px;margin-bottom:14px;">Discounts &amp; extras</h3>
         <div id="extras" class="grid g4 stagger"></div>
+        <!-- Expandable detail panel for the podcast guest offer (toggled by the + on its card) -->
+        <div id="guestPanel" class="guest-panel"></div>
       </div>
     </div>
   </section>
@@ -878,6 +909,21 @@ const CONFIG = {
     exclusivityAddon: 1000,        // per month
     podcastGuestAppearance: 4000,  // Peter guests on YOUR podcast; waived with Market Domination
     guestOnPetersPodcast: 7000,    // YOU guest on Peter's podcast; one slot per quarter
+  },
+
+  // ---- PODCAST GUEST OFFER (expands from the "Guest on Peter's Podcast" extra) ----
+  // Rate is pulled from extras.guestOnPetersPodcast so it never drifts. Edit the copy below.
+  guestOffer: {
+    included: [
+      "A full one-hour interview with Peter.",
+      "Every asset from the episode (clips, audio, and graphics), yours to share and distribute on your own channels.",
+      "Up to 180 seconds of in-episode ad time for your company. Most guests pass and let the conversation speak for itself, but the option is yours.",
+    ],
+    howItWorks: [
+      "It's a conversation, not a commercial. Peter steers the discussion toward what genuinely interests his audience, which is exactly why they listen.",
+      "Bring a framework. Send over a short list of topics, questions, or points you'd like to hit, and Peter will shape the conversation around it.",
+      "The best episodes live in the overlap between your expertise and what Peter actually wants to dig into.",
+    ],
   },
 
   // ---- CONSULTING ----
@@ -1263,8 +1309,30 @@ function renderExtras(){
     +   '<h4>Exclusivity Add-on</h4><p>Prevent competitors from advertising during your term, so your brand owns the category. The exact rate depends on your category.</p></div>'
     + '<div class="card extra-card"><div class="extra-v">'+money(x.podcastGuestAppearance)+'</div>'
     +   '<h4>Peter on Your Podcast</h4><p>Bring Peter on your podcast. This fee is waived with the Market Domination bundle.</p></div>'
-    + '<div class="card extra-card"><div class="extra-v">'+money(x.guestOnPetersPodcast)+'</div>'
-    +   '<h4>Guest on Peter\'s Podcast</h4><p>Be a guest on Peter\'s podcast. One slot available per quarter.</p></div>';
+    + '<div class="card extra-card guest-extra">'
+    +   '<button type="button" class="guest-toggle" aria-expanded="false" aria-controls="guestPanel" aria-label="More on the podcast guest opportunity">+</button>'
+    +   '<div class="extra-v">'+money(x.guestOnPetersPodcast)+'</div>'
+    +   '<h4>Guest on Peter\'s Podcast</h4><p>Be a guest on Peter\'s podcast. One slot available per quarter. <span class="guest-more">Tap + for details.</span></p></div>';
+  renderGuestPanel();
+}
+
+// ----- Podcast guest offer: content for the expandable panel -----
+function renderGuestPanel(){
+  const g = CONFIG.guestOffer;
+  const rate = money(CONFIG.extras.guestOnPetersPodcast);
+  const mailto = "mailto:" + CONFIG.contactEmail + "?subject=" + encodeURIComponent("Podcast guest booking");
+  const li = function(arr){ return arr.map(function(f){ return "<li>"+f+"</li>"; }).join(""); };
+  document.getElementById("guestPanel").innerHTML =
+    '<div class="guest-panel-inner"><div class="guest-card">'
+    + '<div class="guest-kicker">Guest Opportunity</div>'
+    + '<h3 class="guest-title">Be a Guest on Peter\'s Podcast</h3>'
+    + '<p class="guest-rate">A flat <strong>'+rate+'</strong>. One hour with Peter, in front of an audience of property management decision makers.</p>'
+    + '<div class="guest-cols">'
+    +   '<div><h4>What\'s included</h4><ul class="feat">'+li(g.included)+'</ul></div>'
+    +   '<div><h4>How it works</h4><ul class="feat">'+li(g.howItWorks)+'</ul></div>'
+    + '</div>'
+    + '<a class="btn btn-primary js-contact" href="'+mailto+'">Email to book this</a>'
+    + '</div></div>';
 }
 
 // ----- Urgent deals (§4.13): one tile per ad type, each with discounted price + open dates -----
@@ -1493,6 +1561,24 @@ function setupLightbox(){
 }
 
 /* ==========================================================================
+   PODCAST GUEST PANEL  —  the + on the guest card expands a full-width detail panel.
+   ========================================================================== */
+function setupGuestPanel(){
+  document.addEventListener("click", function(e){
+    const t = e.target.closest && e.target.closest(".guest-toggle");
+    if (!t) return;
+    const panel = document.getElementById("guestPanel");
+    if (!panel) return;
+    const open = !panel.classList.contains("open");
+    panel.classList.toggle("open", open);
+    t.setAttribute("aria-expanded", open ? "true" : "false");
+    t.textContent = open ? "×" : "+";        // + becomes ×
+    if (open && !REDUCED) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setTimeout(postHeight, 500);                    // panel changed page height (for iframe embeds)
+  });
+}
+
+/* ==========================================================================
    BOOT
    ========================================================================== */
 function boot(){
@@ -1512,6 +1598,7 @@ function boot(){
   setupCountUps();
   setupLightbox();
   setupContactModal();
+  setupGuestPanel();
   postHeight();
   window.addEventListener("resize", postHeight);
   window.addEventListener("load", postHeight);
