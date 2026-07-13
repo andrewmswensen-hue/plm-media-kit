@@ -93,7 +93,8 @@
     border-bottom:1px solid var(--line);
   }
   nav.top .bar{ display:flex; align-items:center; gap:20px; height:58px; max-width:var(--maxw); margin:0 auto; padding:0 24px; }
-  nav.top .brand{ font-weight:700; color:var(--navy); letter-spacing:-.01em; font-size:17px; white-space:nowrap; }
+  nav.top .brand{ font-weight:700; color:var(--navy); letter-spacing:-.01em; font-size:17px; white-space:nowrap; cursor:pointer; }
+  nav.top .brand:hover{ text-decoration:none; }
   nav.top .brand span{ color:var(--primary); }
   nav.top .back-link{ font-size:13px; color:var(--muted); font-weight:600; white-space:nowrap; }
   nav.top .back-link:hover{ color:var(--primary); text-decoration:none; }
@@ -362,7 +363,7 @@
   .guest-toggle:hover{ background:var(--wash); }
   .guest-toggle[aria-expanded="true"]{ background:var(--navy); color:#fff; border-color:var(--navy); }
 
-  .guest-panel{ display:grid; grid-template-rows:0fr; opacity:0; margin-top:0;
+  .guest-panel{ display:grid; grid-template-rows:0fr; opacity:0; margin-top:0; scroll-margin-top:88px;
                 transition:grid-template-rows .45s ease, opacity .4s ease, margin-top .45s ease; }
   .guest-panel.open{ grid-template-rows:1fr; opacity:1; margin-top:22px; }
   .guest-panel-inner{ overflow:hidden; min-height:0; visibility:hidden; transition:visibility 0s linear .45s; }
@@ -494,7 +495,7 @@
 <nav class="top" aria-label="Primary">
   <div class="bar">
     <a class="back-link" id="backLink" href="https://peterlohmann.com" target="_blank" rel="noopener"><span aria-hidden="true">&larr;</span> peterlohmann.com</a>
-    <div class="brand">Peter <span>Lohmann</span></div>
+    <a class="brand" href="#" aria-label="Back to top">Peter <span>Lohmann</span></a>
     <div class="links">
       <a href="#about">About</a>
       <a href="#audience">Audience</a>
@@ -1578,6 +1579,21 @@ function setupGuestPanel(){
   });
 }
 
+// Shareable deep link: opening the page at #podcast-guest expands the guest panel and jumps to it.
+function openGuestFromHash(){
+  if (window.location.hash !== "#podcast-guest") return;
+  const panel = document.getElementById("guestPanel");
+  const toggle = document.querySelector(".guest-toggle");
+  if (!panel || !toggle) return;
+  // make sure the surrounding section isn't left dimmed by the scroll-reveal
+  const section = panel.closest("section");
+  if (section) section.querySelectorAll(".reveal,.stagger").forEach(function(e){ e.classList.add("in"); });
+  panel.classList.add("open");
+  toggle.setAttribute("aria-expanded", "true");
+  toggle.textContent = "×";
+  setTimeout(function(){ panel.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "start" }); postHeight(); }, 350);
+}
+
 /* ==========================================================================
    BOOT
    ========================================================================== */
@@ -1599,6 +1615,12 @@ function boot(){
   setupLightbox();
   setupContactModal();
   setupGuestPanel();
+  // Brand "Peter Lohmann" scrolls back to the very top
+  var brand = document.querySelector(".brand");
+  if (brand) brand.addEventListener("click", function(e){ e.preventDefault(); window.scrollTo({ top:0, behavior: REDUCED ? "auto" : "smooth" }); });
+  // Deep link support for the podcast guest offer (#podcast-guest)
+  openGuestFromHash();
+  window.addEventListener("hashchange", openGuestFromHash);
   postHeight();
   window.addEventListener("resize", postHeight);
   window.addEventListener("load", postHeight);
