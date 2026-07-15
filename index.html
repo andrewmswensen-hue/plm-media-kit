@@ -286,6 +286,8 @@
   .deal-tile{ position:relative; overflow:hidden; background:#fff; border:1px solid #f3d6c6; border-top:4px solid var(--orange);
               border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); }
   .deal-tile.is-soldout{ opacity:.72; filter:grayscale(.4); }
+  /* unavailable tiles: blur the pricing so a discount is implied but not legible */
+  .deal-tile.is-soldout .deal-price, .deal-tile.is-soldout .deal-off{ filter:blur(6px); user-select:none; pointer-events:none; }
   .deal-type{ font-weight:700; color:var(--navy); font-size:18px; margin-bottom:12px; }
   .deal-price{ display:flex; align-items:baseline; gap:12px; }
   .deal-price .was{ color:var(--muted-2); text-decoration:line-through; font-size:18px; }
@@ -941,9 +943,9 @@ const CONFIG = {
   // label come from `products` (never drift). Past dates auto-hide; the day-of-week /
   // issue is derived from each date. Podcast follows CONFIG.podcast.available.
   urgentDeals: {
-    primary:   { product: "primaryNewsletter",   deal: 3000, dates: ["2026-08-04","2026-08-11","2026-08-18"] },
-    secondary: { product: "secondaryNewsletter", deal: 1000, dates: ["2026-07-17","2026-07-24","2026-07-31"] },
-    podcast:   { product: "podcastAd",           deal: 1500, dates: [] },
+    primary:   { product: "primaryNewsletter",   deal: 3000, noun: "primary newsletter ads",   soonest: "November 2026", dates: [] },
+    secondary: { product: "secondaryNewsletter", deal: 1000, noun: "secondary newsletter ads", soonest: "November 2026", dates: ["2026-07-17","2026-07-24","2026-07-31"] },
+    podcast:   { product: "podcastAd",           deal: 1500, noun: "podcast ads",               soonest: "November 2026", dates: [] },
   },
 };
 
@@ -1354,23 +1356,24 @@ function renderDeals(){
     const original = prod.price;
     const off = dealPct(original, d.deal);
     const gated = prod.requiresPodcast && !CONFIG.podcast.available;
+    const upcoming = (d.dates || []).filter(function(x){ return x >= today; }).sort();
+    // A tile is "unavailable" when podcast is gated or there are no upcoming dates.
+    // Unavailable tiles are dulled, their prices blurred (a discount is implied, not readable),
+    // and they show a "soonest availability" note.
+    const unavailable = gated || upcoming.length === 0;
 
-    let body;
-    if (gated){
-      body = '<p class="deal-note">Discounted podcast slots return '+returnDateStr()+'.</p>';
-    } else {
-      const upcoming = (d.dates || []).filter(function(x){ return x >= today; }).sort();
-      body = upcoming.length
-        ? '<div class="deal-dates"><div class="deal-date-label">Open dates</div><ul>'
-            + upcoming.map(function(x){ return '<li><span class="dd-date">'+prettyDate(x)+'</span><span class="dd-issue">'+dayName(x)+' issue</span></li>'; }).join("")
-            + '</ul></div>'
-        : '<p class="deal-note" style="color:var(--muted);">Email for the next open date.</p>';
-    }
-    return '<div class="deal-tile'+(gated?" is-soldout":"")+'">'
-         +   (gated ? '<div class="ribbon">SOLD OUT</div>' : "")
+    const body = unavailable
+      ? '<p class="deal-note">No discounted slots available right now. Soonest availability for '+d.noun+': '+d.soonest+'.</p>'
+      : '<div class="deal-dates"><div class="deal-date-label">Open dates</div><ul>'
+          + upcoming.map(function(x){ return '<li><span class="dd-date">'+prettyDate(x)+'</span><span class="dd-issue">'+dayName(x)+' issue</span></li>'; }).join("")
+          + '</ul></div>';
+
+    const hide = unavailable ? ' aria-hidden="true"' : '';   // blurred prices are decorative when unavailable
+    return '<div class="deal-tile'+(unavailable?" is-soldout":"")+'">'
+         +   (unavailable ? '<div class="ribbon">SOLD OUT</div>' : "")
          +   '<div class="deal-type">'+prod.label+'</div>'
-         +   '<div class="deal-price"><span class="was">'+money(original)+'</span><span class="now">'+money(d.deal)+'</span></div>'
-         +   '<div class="deal-off">'+off+'% off per placement</div>'
+         +   '<div class="deal-price"'+hide+'><span class="was">'+money(original)+'</span><span class="now">'+money(d.deal)+'</span></div>'
+         +   '<div class="deal-off"'+hide+'>'+off+'% off per placement</div>'
          +   body
          + '</div>';
   }).join("");
