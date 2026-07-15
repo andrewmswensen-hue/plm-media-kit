@@ -1370,7 +1370,7 @@ function renderDeals(){
 
     const hide = unavailable ? ' aria-hidden="true"' : '';   // blurred prices are decorative when unavailable
     return '<div class="deal-tile'+(unavailable?" is-soldout":"")+'">'
-         +   (unavailable ? '<div class="ribbon">SOLD OUT</div>' : "")
+         +   (gated ? '<div class="ribbon">SOLD OUT</div>' : "")   // ribbon only when truly sold out (podcast), not merely no dates
          +   '<div class="deal-type">'+prod.label+'</div>'
          +   '<div class="deal-price"'+hide+'><span class="was">'+money(original)+'</span><span class="now">'+money(d.deal)+'</span></div>'
          +   '<div class="deal-off"'+hide+'>'+off+'% off per placement</div>'
