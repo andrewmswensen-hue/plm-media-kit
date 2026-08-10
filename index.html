@@ -24,6 +24,10 @@
 <link rel="apple-touch-icon" href="favicon.png" />
 
 <style>
+  /* Bely Display — Peter's Adobe logo font, used only for his name (hero + nav wordmark).
+     Falls back to Georgia/serif if the Adobe kit doesn't serve this domain yet. */
+  @import url('https://use.typekit.net/dik1zcl.css');
+
   /* ---------- DESIGN TOKENS ---------- */
   :root{
     --primary:#2C7CB0;      /* steel blue  */
@@ -93,7 +97,7 @@
     border-bottom:1px solid var(--line);
   }
   nav.top .bar{ display:flex; align-items:center; gap:20px; height:58px; max-width:var(--maxw); margin:0 auto; padding:0 24px; }
-  nav.top .brand{ font-weight:700; color:var(--navy); letter-spacing:-.01em; font-size:17px; white-space:nowrap; cursor:pointer; }
+  nav.top .brand{ font-family:"bely-display",Georgia,serif; font-weight:400; color:var(--navy); letter-spacing:0; font-size:21px; white-space:nowrap; cursor:pointer; }
   nav.top .brand:hover{ text-decoration:none; }
   nav.top .brand span{ color:var(--primary); }
   nav.top .back-link{ font-size:13px; color:var(--muted); font-weight:600; white-space:nowrap; }
@@ -138,30 +142,40 @@
        }
   .hero .wrap{ padding-top:96px; padding-bottom:104px; }
   .hero .eyebrow{ color:var(--primary); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:clamp(19px,2.4vw,24px); margin-bottom:16px; }
-  .hero h1{ font-size:clamp(44px,6.6vw,92px); line-height:1; margin-bottom:20px; }
+  .hero h1{ font-family:"bely-display",Georgia,"Times New Roman",serif; font-weight:400; letter-spacing:0; font-size:clamp(46px,7vw,96px); line-height:1.02; margin-bottom:20px; }
   .hero .subtitle{ font-size:clamp(19px,2.4vw,24px); color:var(--navy); font-weight:600; margin-bottom:14px; }
   .hero .tagline{ font-size:clamp(17px,2vw,20px); color:var(--muted); max-width:40ch; margin-bottom:34px; }
   .hero .cta-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:34px; }
   .hero .foot{ color:var(--muted-2); font-size:15px; }
   .hero .foot a{ color:var(--primary); }
-  /* two-column hero: photo above text on mobile, beside it on wider screens */
+  /* two-column hero: portrait above text on mobile, beside it on wider screens */
   .hero-grid{ display:flex; flex-direction:column-reverse; gap:30px; align-items:flex-start; }
-  .hero-photo{ align-self:center; }
-  .hero-photo .headshot{ width:232px; height:232px; }
-  .hero-photo .headshot .mono{ font-size:76px; }
-  @media (min-width:900px){
-    .hero-grid{ display:grid; grid-template-columns:1fr auto; gap:56px; align-items:center; }
-    .hero-photo .headshot{ width:344px; height:344px; }
-    .hero-photo .headshot .mono{ font-size:112px; }
-  }
+  .hero-photo{ align-self:center; position:relative; padding-top:40px; }
 
-  /* ---------- HEADSHOT (now in the hero) ---------- */
-  .headshot{ border-radius:50%; overflow:hidden; flex:none;
-             background:linear-gradient(160deg,var(--primary),var(--navy)); position:relative;
-             display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-lg); }
-  .headshot .mono{ color:#fff; font-weight:700; letter-spacing:.02em; opacity:.92; }
-  /* scale a touch and nudge right so Peter sits centered in the circle */
-  .headshot img{ width:100%; height:100%; object-fit:cover; transform:scale(1.06) translateX(3%); }
+  /* ---------- STYLIZED PORTRAIT RING (matches peterlohmann.com) ----------
+     Background photo inside a blue-bordered circle, Peter's cut-out headshot
+     popping out the top, and a floating stat badge. */
+  .hero-portrait{ position:relative; width:236px; height:236px; }
+  .hero-portrait::before{ content:""; position:absolute; inset:0; border-radius:50%; z-index:0;
+    background:url('main-bg.jpg') center/cover, #fff;
+    border:3px solid var(--primary); box-shadow:0 14px 36px rgba(31,58,77,.12); }
+  .hp-clip{ position:absolute; inset:0; border-radius:50%; overflow:hidden; z-index:1; }
+  .hp-clip img{ position:absolute; left:50%; bottom:-3%; transform:translateX(-49%); width:114%; max-width:none; height:auto; }
+  .hp-pop{ position:absolute; left:50%; bottom:-3%; transform:translateX(-49%); width:114%; max-width:none; height:auto; z-index:2;
+    pointer-events:none; display:block;
+    -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 38%,transparent 52%);
+            mask-image:linear-gradient(to bottom,#000 0,#000 38%,transparent 52%); }
+  .hp-pop img{ display:block; width:100%; height:auto; }
+  .hero-badge{ position:absolute; z-index:3; left:-14px; bottom:14px;
+    background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg);
+    padding:11px 16px; display:flex; align-items:center; gap:10px; }
+  .hero-badge .bn{ font-weight:800; font-size:22px; color:var(--primary-dark); letter-spacing:-.02em; line-height:1; }
+  .hero-badge .bl{ font-size:12px; color:var(--muted); line-height:1.25; max-width:12ch; }
+  @media (min-width:900px){
+    .hero-grid{ display:grid; grid-template-columns:1fr auto; gap:64px; align-items:center; }
+    .hero-portrait{ width:348px; height:348px; }
+    .hero-badge .bn{ font-size:26px; }
+  }
 
   /* ---------- ABOUT (text-forward) ---------- */
   .about-body{ max-width:760px; }
@@ -531,12 +545,23 @@
           <a id="heroEmail" href="#">aswensen@rlpmg.com</a>
         </p>
       </div>
-      <!-- SWAP: drop "peter-headshot.jpg" into this folder; the "PL" monogram shows until then. -->
+      <!-- SWAP: replace peter-headshot-trans.webp (+ .png fallback) and main-bg.jpg to change the portrait. -->
       <div class="hero-photo reveal">
-        <div class="headshot hero-headshot" role="img" aria-label="Peter Lohmann">
-          <img id="peterPhoto" src="peter-headshot.jpg" alt="Peter Lohmann"
-               onerror="this.style.display='none';var m=document.getElementById('peterMono');if(m)m.style.display='flex';" />
-          <span id="peterMono" class="mono" aria-hidden="true" style="display:none;">PL</span>
+        <div class="hero-portrait" role="img" aria-label="Peter Lohmann">
+          <div class="hp-clip">
+            <picture>
+              <source srcset="peter-headshot-trans.webp" type="image/webp" />
+              <img src="peter-headshot-trans.png" alt="Peter Lohmann" fetchpriority="high" />
+            </picture>
+          </div>
+          <picture class="hp-pop" aria-hidden="true">
+            <source srcset="peter-headshot-trans.webp" type="image/webp" />
+            <img src="peter-headshot-trans.png" alt="" fetchpriority="high" />
+          </picture>
+        </div>
+        <div class="hero-badge" aria-hidden="true">
+          <span class="bn">250K+</span>
+          <span class="bl">monthly impressions across all platforms</span>
         </div>
       </div>
     </div>
