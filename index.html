@@ -1266,8 +1266,7 @@ function renderAlaCarte(){
         +   bl(bullets.secondary)
         + '</div>';
   // 3. Podcast Ad Slot  (+ Podcast Ad Read add-on pinned to the bottom)
-  html += '<div class="price-card'+(podGated?" is-soldout":"")+'">'
-        +   (podGated ? '<div class="ribbon">SOLD OUT</div>' : "")
+  html += '<div class="price-card">'
         +   title("Podcast","Ad Slot")
         +   '<div class="amt">'+money(P.podcastAd.price)+'</div>'
         +   bl(bullets.podcast)
@@ -1290,14 +1289,11 @@ function renderSeasons(){
   const wrap = document.getElementById("seasons");
   wrap.innerHTML = CONFIG.seasonPrograms.map(function(s){
     const gated = s.requiresPodcast && !CONFIG.podcast.available;
-    const soldClass = gated ? " is-soldout" : "";
-    const ribbon = gated ? '<div class="ribbon">SOLD OUT</div>' : "";
     const feats = '<ul class="feat">' + s.features.map(function(f){ return "<li>"+f+"</li>"; }).join("") + '</ul>';
-    const avail = (gated && s.id==="halfseason")
-      ? '<p class="tag tag-warn" style="margin-top:14px;">Available starting '+returnDateStr()+'</p>' : "";
+    const avail = gated
+      ? '<p class="tag tag-warn" style="margin-top:14px;">Sold out until '+returnDateStr()+'</p>' : "";
     const feat = s.id === "presenting" ? " featured" : "";
-    return '<div class="card season-card'+soldClass+feat+'">'
-         +   ribbon
+    return '<div class="card season-card'+feat+'">'
          +   '<h3>'+s.name+'</h3>'
          +   '<p style="color:var(--muted);font-size:15px;margin:2px 0 8px;">'+s.blurb+'</p>'
          +   '<div class="amt" style="font-size:34px;font-weight:700;color:var(--navy);letter-spacing:-.02em;">'+money(s.price)+'</div>'
@@ -1315,11 +1311,10 @@ function renderBundles(){
     const r = computeBundle(b);
     const orange = b.accent === "orange" ? " orange" : "";
     const lines = r.lines.map(function(l){
-      const dropped = !l.counts ? " dropped" : "";
-      const ret = (!l.counts && l.requiresPodcast) ? ' <span class="ret">returns '+returnDateStr()+'</span>' : "";
-      return '<li class="'+dropped.trim()+'"><span class="q">'+l.qty+'×</span><span class="name">'+l.label+'</span>'+ret+'</li>';
+      const note = (!l.counts && l.requiresPodcast) ? ' <span class="ret">sold out until Nov 12</span>' : "";
+      return '<li><span class="q">'+l.qty+'×</span><span class="name">'+l.label+'</span>'+note+'</li>';
     }).join("");
-    const rejoin = r.hasDropped ? '<div class="rejoin">Podcast slots rejoin this bundle '+returnDateStr()+'. The price shown already reflects podcast being out.</div>' : "";
+    const rejoin = r.hasDropped ? '<div class="rejoin">This monthly price reflects the newsletter placements; podcast placements are sold out until '+returnDateStr()+'.</div>' : "";
     return '<div class="bundle'+orange+'">'
          +   '<div class="b-top"><h3>'+b.name+'</h3><span class="save">'+r.savingsPct+'% savings</span></div>'
          +   '<div class="price">'+money(r.price)+'<small> /mo</small></div>'
