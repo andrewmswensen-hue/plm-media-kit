@@ -997,18 +997,21 @@ function productCounts(prod){
 // Compute everything about a bundle from its components.
 // Returns { sum, price, savingsPct, hasDropped, lines:[...] }
 function computeBundle(bundle){
-  let sum = 0, hasDropped = false;
+  let sum = 0, hasPending = false;
   const lines = bundle.components.map(function(c){
     const prod = CONFIG.products[c.product];
-    const counts = productCounts(prod);
-    if (counts) sum += prod.price * c.qty;
-    else if (prod && prod.requiresPodcast) hasDropped = true;
-    return { key:c.product, label:prod.label, qty:c.qty, counts:counts,
-             requiresPodcast:!!prod.requiresPodcast, price:prod.price };
+    const active = !!prod && prod.active !== false;
+    // Bundles INCLUDE podcast in the price even while podcast is sold out; those lines are
+    // "pending" — reserved and paid for now, delivering when podcast returns in November.
+    const pending = active && !!prod.requiresPodcast && !CONFIG.podcast.available;
+    if (active) sum += prod.price * c.qty;
+    if (pending) hasPending = true;
+    return { key:c.product, label:prod.label, qty:c.qty, price:prod.price,
+             requiresPodcast:!!prod.requiresPodcast, active:active, pending:pending };
   });
   const price = roundUpTo(sum * (1 - bundle.discount), CONFIG.bundleRounding);
   const savingsPct = Math.round(bundle.discount * 100);
-  return { sum:sum, price:price, savingsPct:savingsPct, hasDropped:hasDropped, lines:lines };
+  return { sum:sum, price:price, savingsPct:savingsPct, hasPending:hasPending, lines:lines };
 }
 
 // Discount % for an urgent deal.
@@ -1035,20 +1038,13 @@ function runSelfCheck(){
     const line = (pass?"✓ PASS":"✗ FAIL") + "  " + label + "  got " + got + "  want " + want;
     if (pass) console.log("%c"+line, "color:#2e7d32"); else console.error(line);
   }
-  const saved = CONFIG.podcast.available;
-  CONFIG.podcast.available = false;
-  const mOff = computeBundle(CONFIG.bundles[0]), dOff = computeBundle(CONFIG.bundles[1]);
-  check("Momentum (podcast off)",           mOff.price, 3610);
-  check("Market Domination (podcast off)",  dOff.price, 6365);
-  check("Momentum savings %",               mOff.savingsPct, 24);
-  check("Market Domination savings %",      dOff.savingsPct, 33);
-  CONFIG.podcast.available = true;
-  const mOn = computeBundle(CONFIG.bundles[0]), dOn = computeBundle(CONFIG.bundles[1]);
-  check("Momentum (podcast on)",            mOn.price, 5195);
-  check("Market Domination (podcast on)",   dOn.price, 9160);
-  check("Momentum savings % (on)",          mOn.savingsPct, 24);
-  check("Market Domination savings % (on)", dOn.savingsPct, 33);
-  CONFIG.podcast.available = saved;
+  // Bundles always include podcast in the price (podcast delivers on return), so the
+  // price is independent of the availability flag.
+  const m = computeBundle(CONFIG.bundles[0]), d = computeBundle(CONFIG.bundles[1]);
+  check("Momentum bundle price",          m.price, 5195);
+  check("Market Domination bundle price", d.price, 9160);
+  check("Momentum savings %",             m.savingsPct, 24);
+  check("Market Domination savings %",    d.savingsPct, 33);
   const allPass = results.every(function(r){ return r.pass; });
   console.log(allPass ? "%c✓ ALL PRICING SELF-CHECKS PASSED" : "%c✗ PRICING SELF-CHECK FAILURES ABOVE",
               "font-weight:bold;color:"+(allPass?"#2e7d32":"#c62828"));
@@ -1311,10 +1307,10 @@ function renderBundles(){
     const r = computeBundle(b);
     const orange = b.accent === "orange" ? " orange" : "";
     const lines = r.lines.map(function(l){
-      const note = (!l.counts && l.requiresPodcast) ? ' <span class="ret">sold out until Nov 12</span>' : "";
+      const note = l.pending ? ' <span class="ret">begins Nov 12</span>' : "";
       return '<li><span class="q">'+l.qty+'×</span><span class="name">'+l.label+'</span>'+note+'</li>';
     }).join("");
-    const rejoin = r.hasDropped ? '<div class="rejoin">This monthly price reflects the newsletter placements; podcast placements are sold out until '+returnDateStr()+'.</div>' : "";
+    const rejoin = r.hasPending ? '<div class="rejoin">Podcast placements are included in this price and begin delivering '+returnDateStr()+' (currently sold out).</div>' : "";
     return '<div class="bundle'+orange+'">'
          +   '<div class="b-top"><h3>'+b.name+'</h3><span class="save">'+r.savingsPct+'% savings</span></div>'
          +   '<div class="price">'+money(r.price)+'<small> /mo</small></div>'
